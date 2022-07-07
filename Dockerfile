@@ -19,8 +19,7 @@ ARG USER_HOME_DIR=/home/${USERNAME}
 
 # default entrypoint
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
-RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh && \
-  ln -sf /bin/bash /bin/sh
+RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh
 
 USER ${USERNAME}
 
@@ -32,8 +31,10 @@ RUN mkdir -p "${USER_HOME_DIR}" && touch "${USER_HOME_DIR}/.nix-channels" && \
 
 WORKDIR "${USER_HOME_DIR}"
 
-# Space separated list of default packages to install
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv"
+# Space separated list of default packages to install to be available on default profile
+# This is needed for process that is executed before direnv can be hooked
+# nodejs is needed to support vscode devcontainers
+ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.nodejs nixpkgs.gawk nixpkgs.git"
 RUN nix-env -iA ${INITIAL_PACKAGES}
 
 # Direnv bashrc hook
@@ -42,8 +43,11 @@ RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_
     echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc"
 
 # default.nix pacakage to install
+# useful to preload packages on docker build phase, rather than on runtime
+# if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
 ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
+# Entrypoint takes directory to activate direnv too as first parameter. The rest of the parameters is the command executed by direnv
 ENTRYPOINT [ "${USER_HOME_DIR}/entrypoint.sh", "${USER_HOME_DIR}" ]
-CMD [ "bash", "-c", "tail -f /dev/null" ]
+CMD [ "bash", "-c", "while sleep 1000; do :; done" ]

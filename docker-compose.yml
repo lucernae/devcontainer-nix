@@ -1,11 +1,7 @@
 version: '3'
 services:
   devcontainer:
-    # build: .
-    # image: lucernae/devcontainer-nix
-    entrypoint: /home/vscode/code/entrypoint.sh /home/vscode/code
-    command: bash -c 'tail -f /dev/null'
+    build: .
+    image: ghcr.io/lucernae/devcontainer-nix:latest
     user: "vscode"
-    working_dir: /home/vscode/code
-    volumes:
-      - ${PWD}:/home/vscode/code
+    working_dir: /home/vscode
