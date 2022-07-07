@@ -34,7 +34,7 @@ WORKDIR "${USER_HOME_DIR}"
 # Space separated list of default packages to install to be available on default profile
 # This is needed for process that is executed before direnv can be hooked
 # nodejs is needed to support vscode devcontainers
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.nodejs nixpkgs.gawk nixpkgs.git"
+ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.nodejs nixpkgs.gawk"
 RUN nix-env -iA ${INITIAL_PACKAGES}
 
 # Direnv bashrc hook
