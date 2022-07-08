@@ -11,7 +11,9 @@ ARG USER_HOME_DIR=/home/${USERNAME}
 # Space separated list of default packages to install to be available on default profile
 # This is needed for process that is executed before direnv can be hooked
 # nodejs is needed to support vscode devcontainers
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
+
+USER root
+ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.sudo nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
 RUN nix-env -iA ${INITIAL_PACKAGES}
 
 # default.nix pacakage to install
@@ -21,7 +23,9 @@ ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
+RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME} \
+    && chown -R ${USERNAME}:${USERNAME} /nix/store
 
-USER root
-RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh
 USER ${USERNAME}
