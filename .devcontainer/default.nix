@@ -17,7 +17,6 @@ stdenv.mkDerivation rec {
 	installPhase = ''
 		echo "$out"
 		mkdir -p $out/lib
-		
 	'';
 	meta = {
 		description = "VS Code devcontainer with Nix";
