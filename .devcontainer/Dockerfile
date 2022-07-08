@@ -24,7 +24,4 @@ ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
 
 USER root
 RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh
-# Used because vscode's nodejs needs libstdc++.so.6
-# TODO: should execute this from nix recipe in default.nix
-RUN cp "$(nix --extra-experimental-features nix-command eval --impure --raw --expr 'with import <nixpkgs> {}; stdenv.cc.cc.lib')/lib64/libstdc++.so.6" "${LD_LIBRARY_PATH}/libstdc++.so.6"
 USER ${USERNAME}

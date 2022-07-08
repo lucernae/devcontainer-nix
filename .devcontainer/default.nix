@@ -12,11 +12,13 @@ stdenv.mkDerivation rec {
 		vim
 		git
 		stdenv.cc.cc.lib
+		docker-compose
 	];
-
+	dontBuild = true;
 	installPhase = ''
-		echo "$out"
 		mkdir -p $out/lib
+		# libstdc++.so.6 is needed by vscode-server's nodejs
+		cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
 	'';
 	meta = {
 		description = "VS Code devcontainer with Nix";
