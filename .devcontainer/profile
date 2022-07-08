@@ -1,0 +1,22 @@
+
+echo "profile log: $0 $@" >> /tmp/profile.log
+
+. ~/.nix-profile/etc/profile.d/nix.sh
+
+# patch for vscode-server
+nodepath=/vscode/vscode-server/bin/*/*/node
+
+if [[ -n "$nodepath" ]]; then
+    for i in $nodepath; do
+        ln -sf /nix/var/nix/profiles/default/bin/node $i
+    done
+fi
+
+# patch for vscode-remote
+nodepath=/vscode/bin/*/*/node
+
+if [[ -n "$nodepath" ]]; then
+    for i in $nodepath; do
+        ln -sf /nix/var/nix/profiles/default/bin/node $i
+    done
+fi

@@ -11,8 +11,14 @@ stdenv.mkDerivation rec {
 		gawk
 		vim
 		git
+		stdenv.cc.cc.lib
 	];
-	dontInstall = true;
+
+	installPhase = ''
+		echo "$out"
+		mkdir -p $out/lib
+		
+	'';
 	meta = {
 		description = "VS Code devcontainer with Nix";
 		maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];
