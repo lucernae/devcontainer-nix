@@ -14,6 +14,7 @@ stdenv.mkDerivation rec {
 		stdenv.cc.cc.lib
 		sudo
 		su
+		which
 	];
 	dontBuild = true;
 	installPhase = ''
@@ -22,6 +23,7 @@ stdenv.mkDerivation rec {
 		cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
 		cp "${sudo}/bin/sudo" $out/bin/sudo
 		cp "${su}/bin/su" $out/bin/su
+		cp "${which}/bin/which" $out/bin/which
 
 		runHook postInstall
 	'';

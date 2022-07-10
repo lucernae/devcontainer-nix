@@ -29,8 +29,8 @@ RUN nix-env -iA ${INITIAL_PACKAGES}
 # default.nix pacakage to install
 # useful to preload packages on docker build phase, rather than on runtime
 # if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
-ADD default.nix ${USER_HOME_DIR}/default.nix
-RUN nix-env -if ${USER_HOME_DIR}/default.nix
+ADD devcontainer-overrides ${USER_HOME_DIR}/devcontainer-overrides
+RUN nix-env -if ${USER_HOME_DIR}/devcontainer-overrides
 
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
 RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
