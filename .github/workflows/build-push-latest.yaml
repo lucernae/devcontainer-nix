@@ -34,7 +34,6 @@ jobs:
           make up
 
       - name: Run Coverage test
-        working-directory: deployment
         run: |
           cat << EOF | docker-compose exec -T devcontainer bash
           node --version
