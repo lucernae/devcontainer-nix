@@ -10,7 +10,6 @@ ARG USER_GID=$USER_UID
 RUN groupadd --gid $USER_GID $USERNAME \
   && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME
 
-RUN chown -R $USER_UID:$USER_GID /nix
 ARG MAIN_NIX_CHANNEL=https://nixos.org/channels/nixos-22.05
 # We use nixpkgs as name because in devcontainers we are going to use it as package manager instead of the OS
 ARG MAIN_NIX_CHANNEL_NAME=nixpkgs
@@ -20,6 +19,16 @@ ARG USER_HOME_DIR=/home/${USERNAME}
 # default entrypoint
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
 RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh
+
+RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
+    if [[ ! -f "/root/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "/root/.nix-profile"; fi && \
+  . /nix/var/nix/profiles/default/etc/profile.d/nix.sh && \
+  nix-channel --add ${MAIN_NIX_CHANNEL} ${MAIN_NIX_CHANNEL_NAME} && \
+  nix-channel --update
+
+RUN chown $USER_UID:$USER_GID /nix \
+  && chown $USER_UID:$USER_GID /nix/store \
+  && chown -R $USER_UID:$USER_GID /nix/var
 
 USER ${USERNAME}
 
@@ -49,5 +58,5 @@ ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
 # Entrypoint takes directory to activate direnv too as first parameter. The rest of the parameters is the command executed by direnv
-ENTRYPOINT [ "${USER_HOME_DIR}/entrypoint.sh", "${USER_HOME_DIR}" ]
+ENTRYPOINT [ "./entrypoint.sh", "." ]
 CMD [ "bash", "-c", "while sleep 1000; do :; done" ]

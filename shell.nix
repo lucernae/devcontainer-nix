@@ -7,9 +7,6 @@ in
 with pkgs;
 mkShell {
 	inputsFrom = [ (import ./default.nix {}) ] ++ lib.optionals (! isNull local-shell) [ local-shell ];
-	buildInputs = [
-		docker-compose
-	];
 	shellHook = ''
 		echo ""
 		echo "---------------------------------------------------------------"
