@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
 	'';
 	postInstall = ''
 		makeWrapper $out/bin/sudo $out/bin/docker --add-flags ${docker-client}/bin/docker
-		makeWrapper $out/bin/sudo $out/bin/docker-compose --add-flags ${docker-client}/bin/docker-compose
+		makeWrapper $out/bin/sudo $out/bin/docker-compose --add-flags ${docker-compose}/bin/docker-compose
 	'';
 	meta = {
 		description = "VS Code devcontainer with Nix";

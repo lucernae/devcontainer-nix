@@ -14,6 +14,7 @@ stdenv.mkDerivation rec {
 		stdenv.cc.cc.lib
 	];
 	dontBuild = true;
+	dontInstall = true;
 	meta = {
 		description = "VS Code devcontainer with Nix";
 		maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];
