@@ -10,6 +10,8 @@
 		"docker-compose.yml"
 	],
 
+	"overrideCommand": false,
+
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
 	"service": "devcontainer",
@@ -28,8 +30,15 @@
 	// "shutdownAction": "none",
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
-	"postCreateCommand": "bash -c \"direnv allow /workspace\"",
+	"postCreateCommand": "bash -c \"direnv allow /workspace; direnv exec /workspace sleep 1\"",
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode"
+	"remoteUser": "vscode",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
 }

@@ -11,7 +11,9 @@ stdenv.mkDerivation rec {
 		gawk
 		vim
 		git
+		stdenv.cc.cc.lib
 	];
+	dontBuild = true;
 	dontInstall = true;
 	meta = {
 		description = "VS Code devcontainer with Nix";
