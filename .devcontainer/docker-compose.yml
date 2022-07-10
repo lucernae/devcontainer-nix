@@ -22,6 +22,7 @@ services:
       args:
         - IMAGE_TAG=latest
     image: devcontainer-nix
+    privileged: true
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ..:/workspace:cached

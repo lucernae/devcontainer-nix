@@ -1,7 +1,7 @@
 {pkgs ? import <nixpkgs> {} }:
 with pkgs;
 stdenv.mkDerivation rec {
-	pname = "devcontainer";
+	pname = "devcontainer-overrides";
 	version = "1.0";
 	src = ./.;
 	propagatedBuildInputs = [
@@ -12,13 +12,22 @@ stdenv.mkDerivation rec {
 		vim
 		git
 		stdenv.cc.cc.lib
-		docker-compose
+		sudo
+		su
 	];
 	dontBuild = true;
 	installPhase = ''
-		mkdir -p $out/lib
+		mkdir -p $out/lib $out/bin
 		# libstdc++.so.6 is needed by vscode-server's nodejs
 		cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
+		cp "${sudo}/bin/sudo" $out/bin/sudo
+		cp "${su}/bin/su" $out/bin/su
+
+		runHook postInstall
+	'';
+	postInstall = ''
+		makeWrapper $out/bin/sudo $out/bin/docker --add-flags ${docker-client}/bin/docker
+		makeWrapper $out/bin/sudo $out/bin/docker-compose --add-flags ${docker-client}/bin/docker-compose
 	'';
 	meta = {
 		description = "VS Code devcontainer with Nix";
