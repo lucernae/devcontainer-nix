@@ -23,7 +23,7 @@ RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
   nix-channel --add ${MAIN_NIX_CHANNEL} ${MAIN_NIX_CHANNEL_NAME} && \
   nix-channel --update
 
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
+ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
 RUN nix-env -iA ${INITIAL_PACKAGES}
 
 # default.nix pacakage to install
@@ -42,4 +42,24 @@ RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
     && chmod 0440 /etc/sudoers.d/${USERNAME} \
     && chown ${USERNAME}:${USERNAME} /nix/store
 
+# VS-Code patch so that devcontainer detects available shells
+RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
+    && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
+
 USER ${USERNAME}
+
+# Home manager
+ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz 
+ARG HOME_MANAGER_CHANNEL_NAME=home-manager
+
+ENV NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
+    USER=${USERNAME} \
+    HOME=${USER_HOME_DIR}
+
+RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
+    && nix-channel --add ${HOME_MANAGER_CHANNEL} ${HOME_MANAGER_CHANNEL_NAME} \
+    && export NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
+    && nix-channel --update \
+    && mkdir -p ${USER_HOME_DIR}/.config/nixpkgs \
+    && nix-shell '<home-manager>' -A install \
+    && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config

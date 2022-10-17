@@ -57,6 +57,10 @@ RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_
 ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
+# VS-Code patch so that devcontainer detects available shells
+RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
+    && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
+
 # Entrypoint takes directory to activate direnv too as first parameter. The rest of the parameters is the command executed by direnv
 ENTRYPOINT [ "./entrypoint.sh", "." ]
 CMD [ "bash", "-c", "while sleep 1000; do :; done" ]
