@@ -37,7 +37,11 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"arrterian.nix-env-selector",
+				"bbenoist.Nix",
+				"jnoortheen.nix-ide",
+				"brettm12345.nixfmt-vscode"
 			]
 		}
 	}
