@@ -6,6 +6,9 @@ FROM nixpkgs/devcontainer:${NIXOS_VERSION}
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
+ARG USER_HOME_DIR=/home/${USERNAME}
+
+# Root-user setup block
 
 RUN groupadd --gid $USER_GID $USERNAME \
   && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME
@@ -13,12 +16,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 ARG MAIN_NIX_CHANNEL=https://nixos.org/channels/nixos-22.05
 # We use nixpkgs as name because in devcontainers we are going to use it as package manager instead of the OS
 ARG MAIN_NIX_CHANNEL_NAME=nixpkgs
-
-ARG USER_HOME_DIR=/home/${USERNAME}
-
-# default entrypoint
-ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
-RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh
 
 RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
     if [[ ! -f "/root/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "/root/.nix-profile"; fi && \
@@ -30,6 +27,7 @@ RUN chown $USER_UID:$USER_GID /nix \
   && chown $USER_UID:$USER_GID /nix/store \
   && chown -R $USER_UID:$USER_GID /nix/var
 
+# Userspace block
 USER ${USERNAME}
 
 RUN mkdir -p "${USER_HOME_DIR}" && touch "${USER_HOME_DIR}/.nix-channels" && \
@@ -43,7 +41,7 @@ WORKDIR "${USER_HOME_DIR}"
 # Space separated list of default packages to install to be available on default profile
 # This is needed for process that is executed before direnv can be hooked
 # nodejs is needed to support vscode devcontainers
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
+ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
 RUN nix-env -iA ${INITIAL_PACKAGES}
 
 # Direnv bashrc hook
@@ -51,16 +49,50 @@ RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_
     . "${USER_HOME_DIR}/.bashrc" && \
     echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc"
 
-# default.nix pacakage to install
+# Root setup for devcontainers
+USER root
+
+# default.nix package to install
 # useful to preload packages on docker build phase, rather than on runtime
 # if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
 ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
+# default entrypoint
+ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
+RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
+    && chmod u+s $(readlink -f $(command -v sudo)) \
+    && echo "root ALL=(root) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo "#includedir /etc/sudoers.d" >> /etc/sudoers \
+    && mkdir -p /etc/sudoers.d \
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME} \
+    && chown ${USERNAME}:${USERNAME} /nix/store
+
 # VS-Code patch so that devcontainer detects available shells
 RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
+    && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
 
-# Entrypoint takes directory to activate direnv too as first parameter. The rest of the parameters is the command executed by direnv
+# Userspace block
+USER ${USERNAME}
+
+# Home manager support
+ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz 
+ARG HOME_MANAGER_CHANNEL_NAME=home-manager
+
+ENV NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
+    USER=${USERNAME} \
+    HOME=${USER_HOME_DIR}
+
+RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
+    && nix-channel --add ${HOME_MANAGER_CHANNEL} ${HOME_MANAGER_CHANNEL_NAME} \
+    && export NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
+    && nix-channel --update \
+    && mkdir -p ${USER_HOME_DIR}/.config/nixpkgs \
+    && nix-shell '<home-manager>' -A install \
+    && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config
+
+# Entrypoint takes directory to activate direnv as first parameter. The rest of the parameters is the command executed by direnv
 ENTRYPOINT [ "./entrypoint.sh", "." ]
 CMD [ "bash", "-c", "while sleep 1000; do :; done" ]

@@ -6,25 +6,16 @@ stdenv.mkDerivation rec {
   src = ./.;
   propagatedBuildInputs = [
     makeWrapper
-    # needed for vscode-server
-    nodejs
-    gawk
-    vim
-    git
-    stdenv.cc.cc.lib
     sudo
     su
-    which
+    docker
+    docker-compose
   ];
   dontBuild = true;
   installPhase = ''
-    mkdir -p $out/lib $out/bin
-    # libstdc++.so.6 is needed by vscode-server's nodejs
-    cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
+    mkdir -p $out/bin
     cp "${sudo}/bin/sudo" $out/bin/sudo
     cp "${su}/bin/su" $out/bin/su
-    cp "${which}/bin/which" $out/bin/which
-
     runHook postInstall
   '';
   postInstall = ''

@@ -26,11 +26,12 @@ RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
 ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
 RUN nix-env -iA ${INITIAL_PACKAGES}
 
-# default.nix pacakage to install
+# default.nix package to install
 # useful to preload packages on docker build phase, rather than on runtime
 # if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
 ADD devcontainer-overrides ${USER_HOME_DIR}/devcontainer-overrides
-RUN nix-env -if ${USER_HOME_DIR}/devcontainer-overrides
+RUN nix-env  --set-flag priority 6 devcontainer \
+    && nix-env -if ${USER_HOME_DIR}/devcontainer-overrides
 
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
 RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
@@ -44,22 +45,5 @@ RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
 
 # VS-Code patch so that devcontainer detects available shells
 RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
+    && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
-
-USER ${USERNAME}
-
-# Home manager
-ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz 
-ARG HOME_MANAGER_CHANNEL_NAME=home-manager
-
-ENV NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
-    USER=${USERNAME} \
-    HOME=${USER_HOME_DIR}
-
-RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
-    && nix-channel --add ${HOME_MANAGER_CHANNEL} ${HOME_MANAGER_CHANNEL_NAME} \
-    && export NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
-    && nix-channel --update \
-    && mkdir -p ${USER_HOME_DIR}/.config/nixpkgs \
-    && nix-shell '<home-manager>' -A install \
-    && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config
