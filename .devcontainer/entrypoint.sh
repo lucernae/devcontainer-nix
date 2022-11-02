@@ -9,7 +9,6 @@ if [[ -f .envrc ]]; then
     echo "Activating direnv"
     . ~/.nix-profile/etc/profile.d/nix.sh
     direnv allow ./.envrc
-    ls -al /vscode/vscode-server
     direnv exec . "${@:2}"
 fi
 
