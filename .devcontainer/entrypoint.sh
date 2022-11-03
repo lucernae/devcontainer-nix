@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# make docker socket accessible to containers
+sudo chown root:vscode /var/run/docker.sock
+docker buildx install
+
 if [[ -z "$1" ]]; then
     echo "Target directory: $1"
     cd $1
