@@ -27,6 +27,31 @@ RUN chown $USER_UID:$USER_GID /nix \
   && chown $USER_UID:$USER_GID /nix/store \
   && chown -R $USER_UID:$USER_GID /nix/var
 
+# Root setup for devcontainers
+
+# /root/default.nix package to install
+# useful to preload packages on docker build phase, rather than on runtime
+# if you have custom packages to install, simply override the root/default.nix recipe in your own devcontainer
+# root packages here are packages that requires root privileges to install. Like sudo.
+ADD root/default.nix /root/default.nix
+RUN nix-env -if /root/default.nix
+
+# default entrypoint
+ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
+RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
+    && chmod u+s $(readlink -f $(command -v sudo)) \
+    && echo "root ALL=(root) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo "#includedir /etc/sudoers.d" >> /etc/sudoers \
+    && mkdir -p /etc/sudoers.d \
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME} \
+    && chown ${USERNAME}:${USERNAME} /nix/store
+
+# VS-Code patch so that devcontainer detects available shells
+RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
+    && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
+    && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
+
 # Userspace block
 USER ${USERNAME}
 
@@ -49,33 +74,11 @@ RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_
     . "${USER_HOME_DIR}/.bashrc" && \
     echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc"
 
-# Root setup for devcontainers
-USER root
-
 # default.nix package to install
 # useful to preload packages on docker build phase, rather than on runtime
 # if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
 ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
-
-# default entrypoint
-ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
-RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
-    && chmod u+s $(readlink -f $(command -v sudo)) \
-    && echo "root ALL=(root) NOPASSWD:ALL" >> /etc/sudoers \
-    && echo "#includedir /etc/sudoers.d" >> /etc/sudoers \
-    && mkdir -p /etc/sudoers.d \
-    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
-    && chmod 0440 /etc/sudoers.d/${USERNAME} \
-    && chown ${USERNAME}:${USERNAME} /nix/store
-
-# VS-Code patch so that devcontainer detects available shells
-RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
-    && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
-    && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
-
-# Userspace block
-USER ${USERNAME}
 
 # Home manager support
 ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz 
