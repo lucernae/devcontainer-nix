@@ -20,7 +20,7 @@ USER root
 ADD devcontainer-overrides/root /root/devcontainer-overrides
 RUN nix-env -if /root/devcontainer-overrides
 
-ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
+ADD entrypoint-overrides.sh ${USER_HOME_DIR}/entrypoint-overrides.sh
 RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
     && chmod u+s $(readlink -f $(command -v sudo)) \
     && chown ${USERNAME}:${USERNAME} /nix/store

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# needed in the runtime:
+# reset default ACL on /tmp so that nix can use proper umask for nix build process
+sudo setfacl -k /tmp
+
 if [[ -z "$1" ]]; then
     echo "Target directory: $1"
     cd $1

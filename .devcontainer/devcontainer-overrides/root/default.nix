@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   pname = "devcontainer-root-overrides";
   version = "1.0";
   src = ./.;
-  propagatedBuildInputs = [ makeWrapper sudo su docker docker-compose cacert ];
+  propagatedBuildInputs = [ makeWrapper sudo su docker-client docker-compose cacert ];
   dontBuild = true;
   installPhase = ''
     mkdir -p $out/bin
