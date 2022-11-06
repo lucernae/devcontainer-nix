@@ -27,36 +27,14 @@ RUN chown $USER_UID:$USER_GID /nix \
   && chown $USER_UID:$USER_GID /nix/store \
   && chown -R $USER_UID:$USER_GID /nix/var
 
-# Userspace block
-USER ${USERNAME}
-
-RUN mkdir -p "${USER_HOME_DIR}" && touch "${USER_HOME_DIR}/.nix-channels" && \
-    if [[ ! -f "${USER_HOME_DIR}/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "${USER_HOME_DIR}/.nix-profile"; fi && \
-  . /nix/var/nix/profiles/default/etc/profile.d/nix.sh && \
-  nix-channel --add ${MAIN_NIX_CHANNEL} ${MAIN_NIX_CHANNEL_NAME} && \
-  nix-channel --update
-
-WORKDIR "${USER_HOME_DIR}"
-
-# Space separated list of default packages to install to be available on default profile
-# This is needed for process that is executed before direnv can be hooked
-# nodejs is needed to support vscode devcontainers
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
-RUN nix-env -iA ${INITIAL_PACKAGES}
-
-# Direnv bashrc hook
-RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_DIR}/.bashrc" && \
-    . "${USER_HOME_DIR}/.bashrc" && \
-    echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc"
-
 # Root setup for devcontainers
-USER root
 
-# default.nix package to install
+# /root/default.nix package to install
 # useful to preload packages on docker build phase, rather than on runtime
-# if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
-ADD default.nix ${USER_HOME_DIR}/default.nix
-RUN nix-env -if ${USER_HOME_DIR}/default.nix
+# if you have custom packages to install, simply override the root/default.nix recipe in your own devcontainer
+# root packages here are packages that requires root privileges to install. Like sudo.
+ADD root/default.nix /root/default.nix
+RUN nix-env -if /root/default.nix
 
 # default entrypoint
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
@@ -76,6 +54,31 @@ RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
 
 # Userspace block
 USER ${USERNAME}
+
+RUN mkdir -p "${USER_HOME_DIR}" && touch "${USER_HOME_DIR}/.nix-channels" && \
+    if [[ ! -f "${USER_HOME_DIR}/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "${USER_HOME_DIR}/.nix-profile"; fi && \
+  . /nix/var/nix/profiles/default/etc/profile.d/nix.sh && \
+  nix-channel --add ${MAIN_NIX_CHANNEL} ${MAIN_NIX_CHANNEL_NAME} && \
+  nix-channel --update
+
+WORKDIR "${USER_HOME_DIR}"
+
+# Space separated list of default packages to install to be available on default profile
+# This is needed for process that is executed before direnv can be hooked
+# nodejs is needed to support vscode devcontainers
+ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.acl nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
+RUN nix-env -iA ${INITIAL_PACKAGES}
+
+# Direnv bashrc hook
+RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_DIR}/.bashrc" && \
+    . "${USER_HOME_DIR}/.bashrc" && \
+    echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc"
+
+# default.nix package to install
+# useful to preload packages on docker build phase, rather than on runtime
+# if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
+ADD default.nix ${USER_HOME_DIR}/default.nix
+RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
 # Home manager support
 ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz 

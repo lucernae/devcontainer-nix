@@ -1,14 +1,14 @@
 { pkgs ? import <nixpkgs> { } }:
 let
-  local-shell =
-    if builtins.pathExists ./local-shell.nix then
-      (import ./local-shell.nix {
-        inherit pkgs;
-      }) else null;
-in
-with pkgs;
+  local-shell = if builtins.pathExists ./local-shell.nix then
+    (import ./local-shell.nix { inherit pkgs; })
+  else
+    null;
+in with pkgs;
 mkShell {
-  inputsFrom = [ (import ./default.nix { }) ] ++ lib.optionals (! isNull local-shell) [ local-shell ];
+  inputsFrom = [ (import ./default.nix { }) ]
+    ++ lib.optionals (!isNull local-shell) [ local-shell ];
+  buildInputs = [ zsh nixfmt ];
   shellHook = ''
     echo ""
     echo "---------------------------------------------------------------"

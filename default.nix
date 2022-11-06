@@ -11,9 +11,6 @@ stdenv.mkDerivation rec {
     gawk
     vim
     git
-    sudo
-    su
-    which
     stdenv.cc.cc.lib
   ];
   dontBuild = true;
@@ -21,9 +18,6 @@ stdenv.mkDerivation rec {
     mkdir -p $out/lib $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
     cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
-    cp "${sudo}/bin/sudo" $out/bin/sudo
-    cp "${su}/bin/su" $out/bin/su
-    cp "${which}/bin/which" $out/bin/which
   '';
   meta = {
     description = "VS Code devcontainer with Nix";
