@@ -20,7 +20,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - IMAGE_TAG=main
+        - IMAGE_TAG=latest
     # image: devcontainer-nix
     privileged: true
     volumes:

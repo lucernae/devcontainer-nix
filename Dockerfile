@@ -63,11 +63,10 @@ RUN mkdir -p "${USER_HOME_DIR}" && touch "${USER_HOME_DIR}/.nix-channels" && \
 
 WORKDIR "${USER_HOME_DIR}"
 
-# Space separated list of default packages to install to be available on default profile
+# List of default packages to install to be available on default profile
 # This is needed for process that is executed before direnv can be hooked
-# nodejs is needed to support vscode devcontainers
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.acl nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
-RUN nix-env -iA ${INITIAL_PACKAGES}
+ADD packages.nix ${USER_HOME_DIR}/packages.nix
+RUN nix-env -if ${USER_HOME_DIR}/packages.nix
 
 # Direnv bashrc hook
 RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_DIR}/.bashrc" && \
