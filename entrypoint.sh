@@ -2,7 +2,7 @@
 
 # needed in the runtime:
 # reset default ACL on /tmp so that nix can use proper umask for nix build process
-sudo setfacl -k /
+sudo setfacl -k /tmp
 
 if [[ -n "$NIX_MULTI_USER" ]]; then
     echo "Using Nix in multi user mode"
