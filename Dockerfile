@@ -98,7 +98,7 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
 # post build setup
 ADD nix.conf /etc/nix/nix.conf
 ADD default-packages-priority.sh ${USER_HOME_DIR}/default-packages-priority.sh
-RUN chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
+RUN sudo chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
     && ${USER_HOME_DIR}/default-packages-priority.sh
 
 # Entrypoint takes directory to activate direnv as first parameter. The rest of the parameters is the command executed by direnv
