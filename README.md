@@ -14,6 +14,12 @@ In your own repo, simply copy our [.devcontainer](.devcontainer) directory and e
 - `docker-compose.yml` if you need to extend docker-compose recipe to do/mount extra things for your devcontainer
 - `devcontainer.json` if you need to include custom settings like extensions, etc.
 
+# Currently available devcontainer samples
+
+- [default](.devcontainer/default/): minimal example on how to use the devcontainer with direnv
+- [development](.devcontainer/development/): my preferred way of using GitHub Codespace to bootstrap this own repo's development
+- [home-manager](.devcontainer/home-manager/): use flake URI to fetch your home-manager config to setup the devcontainer
+
 # Development
 
 This repository mainly contains Docker recipe to build the devcontainer image.
