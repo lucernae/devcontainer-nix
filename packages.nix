@@ -3,6 +3,7 @@ with pkgs;
 buildEnv {
   name = "devcontainer-packages";
   paths = [
+    zsh
     vim
     git
     direnv # needed for direnv hook
