@@ -6,11 +6,6 @@ stdenv.mkDerivation rec {
   src = ./.;
   propagatedBuildInputs = [
     makeWrapper
-    # needed for vscode-server
-    nodejs
-    gawk
-    vim
-    git
     stdenv.cc.cc.lib
   ];
   dontBuild = true;
@@ -22,5 +17,6 @@ stdenv.mkDerivation rec {
   meta = {
     description = "VS Code devcontainer with Nix";
     maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];
+    priority = 6;
   };
 }

@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.238.1/containers/docker-existing-docker-compose
 // If you want to run as a non-root user in the container, see .devcontainer/docker-compose.yml.
 {
-	"name": "Nix Devcontainer",
+	"name": "Nix Devcontainer (Default)",
 
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
@@ -20,7 +20,7 @@
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
 	"workspaceFolder": "/workspace",
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// Use 'forwardPorts' to make a list of qqports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
@@ -37,7 +37,6 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-azuretools.vscode-docker",
 				"arrterian.nix-env-selector",
 				"bbenoist.Nix",
 				"jnoortheen.nix-ide",

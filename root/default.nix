@@ -7,6 +7,7 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [
     makeWrapper
     # needed for vscode-server
+    zsh
     nodejs
     gawk
     vim
@@ -26,7 +27,7 @@ stdenv.mkDerivation rec {
     cp "${which}/bin/which" $out/bin/which
   '';
   meta = {
-    priority = "6";
+    priority = "7";
     description = "VS Code devcontainer with Nix";
     maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];
   };

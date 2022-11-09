@@ -63,11 +63,10 @@ RUN mkdir -p "${USER_HOME_DIR}" && touch "${USER_HOME_DIR}/.nix-channels" && \
 
 WORKDIR "${USER_HOME_DIR}"
 
-# Space separated list of default packages to install to be available on default profile
+# List of default packages to install to be available on default profile
 # This is needed for process that is executed before direnv can be hooked
-# nodejs is needed to support vscode devcontainers
-ARG INITIAL_PACKAGES="nixpkgs.direnv nixpkgs.nix-direnv nixpkgs.stdenv.cc.cc.lib nixpkgs.acl nixpkgs.ncurses nixpkgs.nodejs nixpkgs.gawk nixpkgs.findutils nixpkgs.openssh nixpkgs.gnupg"
-RUN nix-env -iA ${INITIAL_PACKAGES}
+ADD packages.nix ${USER_HOME_DIR}/packages.nix
+RUN nix-env -if ${USER_HOME_DIR}/packages.nix
 
 # Direnv bashrc hook
 RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_DIR}/.bashrc" && \
@@ -95,6 +94,12 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
     && mkdir -p ${USER_HOME_DIR}/.config/nixpkgs \
     && nix-shell '<home-manager>' -A install \
     && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config
+
+# post build setup
+ADD nix.conf /etc/nix/nix.conf
+ADD default-packages-priority.sh ${USER_HOME_DIR}/default-packages-priority.sh
+RUN sudo chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
+    && ${USER_HOME_DIR}/default-packages-priority.sh
 
 # Entrypoint takes directory to activate direnv as first parameter. The rest of the parameters is the command executed by direnv
 ENTRYPOINT [ "./entrypoint.sh", "." ]
