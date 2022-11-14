@@ -46,6 +46,6 @@ in [
   # the tarball is a build result with rootfs inside
   tarball
   # layeredImage is an executable that can stream the layers
-  # ./result-2 | docker load -
+  # ./result-2 | docker load
   layeredImage
 ]
