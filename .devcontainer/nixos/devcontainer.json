@@ -33,7 +33,7 @@
 	"postCreateCommand": "bash -c \"systemctl start nix-daemon && systemctl start dbus && nix-channel --update\"",
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode",
+	"remoteUser": "root",
 	"customizations": {
 		"vscode": {
 			"extensions": [

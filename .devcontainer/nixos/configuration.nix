@@ -67,13 +67,22 @@ in {
     group = "vscode";
     extraGroups = [ "wheel" "docker" ];
   };
+  security.sudo.configFile = ''
+    %wheel  ALL=(ALL:ALL) NOPASSWD: ALL
+  '';
 
   system.activationScripts.installInitScript = ''
-    ln -fs $systemConfig/init /usr/sbin/init
+    if [ ! -f /usr/sbin/init ]; then
+      ln -fs $systemConfig/init /usr/sbin/init
+    fi
   '';
   system.activationScripts.vscodePatch = ''
-    ln -fs $systemConfig/sw/lib /lib
-    ln -fs /lib /lib64
+    if [ ! -f /lib ]; then
+      ln -fs $systemConfig/sw/lib /lib
+    fi
+    if [ ! -f /lib64 ]; then
+      ln -fs /lib /lib64
+    fi
   '';
 
   system.nssModules = lib.mkForce [ ];
