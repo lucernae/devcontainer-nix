@@ -72,6 +72,7 @@ jobs:
            docker-compose exec -T devcontainer uname -a
 
       - name: Run Coverage test
+        working-directory: .devcontainer/nixos-arion
         run: |
           cat << EOF | docker-compose exec -T devcontainer bash
           node --version
