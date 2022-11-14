@@ -2,3 +2,7 @@
 .local.envrc
 .local.env
 .idea
+.direnv
+.local.envrc
+result
+result-*
