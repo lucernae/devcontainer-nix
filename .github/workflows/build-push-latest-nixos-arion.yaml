@@ -52,6 +52,7 @@ jobs:
         shell: direnv exec . bash -eo pipefail {0}
         working-directory: .devcontainer/nixos-arion
         run: |
+           nix-build arion-build.nix
            make a-build config retag-image
 
       - name: Store nix derivation cache
