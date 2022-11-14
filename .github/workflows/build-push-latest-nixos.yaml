@@ -2,9 +2,13 @@ name: latest-build
 on:
   workflow_dispatch:
   pull_request:
+    paths:
+      - .devcontainer/nixos/**
     branches:
       - develop
   push:
+    paths:
+      - .devcontainer/nixos/**
     branches:
       - develop
       - main
@@ -21,10 +25,10 @@ jobs:
       - name: Build test image
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: .devcontainer/nixos
           push: false
           load: true
-          tags: ghcr.io/lucernae/devcontainer-nix:latest
+          tags: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools
           cache-from: |
             type=gha,scope=test
             type=gha,scope=prod
@@ -32,12 +36,17 @@ jobs:
 
       - name: Run docker-compose services
         run: |
-          make up
+          docker-compose up -d
+          sleep 5
+          docker-compose exec devcontainer uname -a
 
       - name: Run Coverage test
         run: |
           cat << EOF | docker-compose exec -T devcontainer bash
           node --version
+          nix-env --version
+          nix --version
+          nix-channel --list
           EOF
 
   docker-builder:
@@ -47,7 +56,7 @@ jobs:
     needs:
       - test
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -75,9 +84,9 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: .devcontainer/nixos
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}
+          tags: nixos-dockertools/${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: |
             type=gha,scope=test

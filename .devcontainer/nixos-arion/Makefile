@@ -14,3 +14,6 @@ dc-up:
 
 post-create-command:
 	./arion-post-create-command.sh
+
+retag-image:
+	./arion-image-retag.sh
