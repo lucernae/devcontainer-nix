@@ -1,4 +1,4 @@
-name: latest-build
+name: latest-build-nixos
 on:
   workflow_dispatch:
   pull_request:
@@ -38,7 +38,7 @@ jobs:
         run: |
           docker-compose up -d
           sleep 5
-          docker-compose exec devcontainer uname -a
+          docker-compose exec -T devcontainer uname -a
 
       - name: Run Coverage test
         run: |
