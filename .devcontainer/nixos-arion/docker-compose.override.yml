@@ -1,0 +1,26 @@
+version: '3.4'
+services:
+  devcontainer:
+    volumes:
+      # Update this to wherever you want VS Code to mount the folder of your project
+      # - ../../:/workspace:cached
+      # - ../nixos/configuration.nix:/etc/nixos/configuration.nix
+
+      # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # Systemd related mount
+      # override cgroup mount to rw if ro doesn't work. but probably insecure.
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw 
+
+    environment:
+      LD_LIBRARY_PATH: /lib:/run/current-system/sw/lib
+      NIX_REMOTE: "daemon"
+      container: "docker"
+      PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
+      
+    cap_add:
+        - SYS_ADMIN
+        - CAP_NET_ADMIN  # needed when you want to alter host network
+
+    # systemd uses init binary as PID 1, so we should not override the entrypoint or cmd
