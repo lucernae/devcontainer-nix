@@ -15,4 +15,7 @@ general workflow of vscode devcontainer where
 you can edit your devcontainer specification, and then 
 switch to "rebuild the container" to develop from inside it.
 
-There is no way to build nix package directly as trigger by vscode.
+There is no way to build nix package directly as triggered by vscode.
+
+In this experiment, we want to see if such workflow is possible, given 
+there are lots of things vscode-server did setup, on top of the running container (not at build time).

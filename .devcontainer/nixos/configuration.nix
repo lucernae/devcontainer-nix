@@ -1,4 +1,6 @@
-{ config, lib, options, pkgs, ... }: {
+{ config, lib, options, pkgs, ... }:
+let devcontainer-patch = import ./devcontainer-patch.nix { inherit pkgs; };
+in {
   boot = {
     # settings to enable booting as OCI containers
     isContainer = true;
@@ -23,7 +25,14 @@
   # services.nginx.enable = true;
   # services.nginx.virtualHosts.localhost.root =
   #   "${pkgs.nix.doc}/share/doc/nix/manual";
-  environment.systemPackages = with pkgs; [ vim zsh arion docker-client ];
+  environment.systemPackages = with pkgs; [
+    vim
+    zsh
+    nodejs
+    arion
+    docker-client
+    devcontainer-patch
+  ];
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
@@ -41,7 +50,32 @@
   #   lib.mkForce [ "CAP_NET_BIND_SERVICE" ];
   systemd.services.nix-daemon.enable = true;
   systemd.services.networkd-wait-online.enable = false;
-  
+
+  # needed by vscode for non-root containers
+  users.mutableUsers = true;
+  users.groups = {
+    vscode = {
+      gid = 1000;
+      name = "vscode";
+    };
+  };
+  users.users.vscode = {
+    uid = 1000;
+    isNormalUser = true;
+    name = "vscode";
+    home = "/home/vscode";
+    group = "vscode";
+    extraGroups = [ "wheel" "docker" ];
+  };
+
+  system.activationScripts.installInitScript = ''
+    ln -fs $systemConfig/init /usr/sbin/init
+  '';
+  system.activationScripts.vscodePatch = ''
+    ln -fs $systemConfig/sw/lib /lib
+    ln -fs /lib /lib64
+  '';
+
   system.nssModules = lib.mkForce [ ];
   system.stateVersion = "22.05";
 }

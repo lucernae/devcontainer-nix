@@ -16,11 +16,12 @@ services:
     # docker-compose.yml file (the first in the devcontainer.json "dockerComposeFile"
     # array). The sample below assumes your primary file is in the root of your project.
     #
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - IMAGE_TAG=main
+    # uncomment the build section when you want to rebuild
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   args:
+    #     - IMAGE_TAG=main
     image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools
     privileged: true
     tty: true
@@ -43,10 +44,9 @@ services:
     hostname: devcontainer
 
     environment:
-      NIX_MULTI_USER: "true"
-      NIX_REMOTE: "daemon"
       container: "docker"
-      PATH: "/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
+      PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
+      LD_LIBRARY_PATH: "/lib:/run/current-system/sw/lib"
       
     cap_add:
         - SYS_ADMIN

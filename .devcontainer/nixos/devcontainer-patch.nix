@@ -4,15 +4,16 @@ stdenv.mkDerivation rec {
   pname = "devcontainer";
   version = "1.0";
   src = ./.;
-  propagatedBuildInputs = [
-    makeWrapper
-    stdenv.cc.cc.lib
-  ];
+  propagatedBuildInputs = [ stdenv.cc.cc.lib glibc ];
+  dontUnpack = true;
   dontBuild = true;
   installPhase = ''
-    mkdir -p $out/lib $out/bin
+    mkdir -p $out/lib $out/lib64 $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
     cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
+    # ld-linux-x86-64.so.2 is needed by vscode-server's nodejs in case it install 32 bit nodejs
+    cp "${glibc}/lib64/ld-linux-x86-64.so.2" $out/lib64
+    ln -sf $out/lib64/ld-linux-x86-64.so.2 $out/lib64/ld-linux.so.2
   '';
   meta = {
     description = "VS Code devcontainer with Nix";

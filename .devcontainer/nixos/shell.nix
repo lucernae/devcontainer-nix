@@ -6,8 +6,7 @@ let
     null;
 in with pkgs;
 mkShell {
-  inputsFrom = [ ]
-    ++ lib.optionals (!isNull local-shell) [ local-shell ];
+  inputsFrom = [ ] ++ lib.optionals (!isNull local-shell) [ local-shell ];
   buildInputs = [ zsh nixfmt skopeo python3 gzip file ];
   shellHook = ''
     echo ""

@@ -15,13 +15,6 @@ let
       (import ./configuration.nix)
       # we add a minimal nixos profile
       (pkgs.path + "/nixos/modules/profiles/minimal.nix")
-      # we want to wrap the init
-      # {
-      #   environment.
-      #   system.activationScripts.installInitScript = ''
-      #     ln -fs $systemConfig/init /usr/sbin/init
-      #   '';
-      # }
     ];
   }).config.system.build.toplevel;
 
@@ -31,27 +24,27 @@ let
     name = "ghcr.io/lucernae/devcontainer-nix";
     tag = "nixos-dockertools";
     # you can include more packages into the paths and nix store inside the image
-    contents = [ 
-    #   pkgs.vim
+    contents = [
+      #   pkgs.vim
     ];
     config = { Cmd = [ "${container}/init" ]; };
   };
   tarball = pkgs.callPackage <nixpkgs/nixos/lib/make-system-tarball.nix> {
-    storeContents = [
-      {
-        symlink = "rootfs";
-        object = "${container}";
-      }
-    ];
-    contents = [
-      {
-        source = ./configuration.nix;
-        target = "etc/nixos/configuration.nix";
-      }
-    ];
+    storeContents = [{
+      symlink = "rootfs";
+      object = "${container}";
+    }];
+    contents = [{
+      source = ./configuration.nix;
+      target = "etc/nixos/configuration.nix";
+    }];
     compressCommand = "cat";
     compressionExtension = "";
   };
-in 
   # container
+in [
+  # the tarball is a build result with rootfs inside
   tarball
+  # layeredImage is an executable that can stream the layers
+  layeredImage
+]
