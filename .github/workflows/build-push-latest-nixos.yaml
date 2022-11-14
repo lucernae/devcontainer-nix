@@ -76,7 +76,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/lucernae/devcontainer-nix
+          images: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools--
           tags: |
             type=semver,pattern=\d.\d.\d
             type=ref,event=branch
@@ -88,7 +88,7 @@ jobs:
         with:
           context: .devcontainer/nixos
           push: true
-          tags: nixos-dockertools/${{ steps.docker_meta.outputs.tags }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: |
             type=gha,scope=test
