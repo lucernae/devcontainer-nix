@@ -26,6 +26,9 @@ services:
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ../../:/workspace:cached
+      # uncomment the next line to have access if you need to cascade/nested the devcontainers
+      # (devcontainer inside devcontainer)
+      # - <absolute path to your workspaces>:/workspaces/<repo-name> 
 
       # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
       - /var/run/docker.sock:/var/run/docker.sock
