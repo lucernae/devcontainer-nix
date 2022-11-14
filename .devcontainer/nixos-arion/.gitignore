@@ -1,0 +1,3 @@
+# arion compose files is excluded because the build is not pure
+docker-compose.yml
+.tmp
