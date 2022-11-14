@@ -77,10 +77,10 @@ in {
     fi
   '';
   system.activationScripts.vscodePatch = ''
-    if [ ! -f /lib ]; then
+    if [ ! -d /lib ]; then
       ln -fs $systemConfig/sw/lib /lib
     fi
-    if [ ! -f /lib64 ]; then
+    if [ ! -d /lib64 ]; then
       ln -fs /lib /lib64
     fi
   '';
