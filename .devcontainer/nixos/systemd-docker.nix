@@ -37,6 +37,10 @@ let
     contents = [{
       source = ./configuration.nix;
       target = "etc/nixos/configuration.nix";
+    }
+    {
+      source = ./devcontainer-patch.nix;
+      target = "etc/nixos/devcontainer-patch.nix";
     }];
     compressCommand = "cat";
     compressionExtension = "";
