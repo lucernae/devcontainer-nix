@@ -106,7 +106,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/lucernae/devcontainer-nix:nixos-arion--
+          images: ghcr.io/lucernae/devcontainer-nix
           tags: |
             type=semver,pattern=\d.\d.\d
             type=ref,event=branch
@@ -143,5 +143,5 @@ jobs:
         working-directory: .devcontainer/nixos-arion
         run: |
            make a-build config retag-image
-           docker tag ghcr.io/lucernae/devcontainer-nix:nixos-arion ${{ steps.docker_meta.outputs.tags }}
-           docker push ${{ steps.docker_meta.outputs.tags }}
+           docker tag ghcr.io/lucernae/devcontainer-nix:nixos-arion ${{ steps.docker_meta.outputs.tags }}--nixos-arion
+           docker push ${{ steps.docker_meta.outputs.tags }}--nixos-arion
