@@ -8,7 +8,7 @@ in with pkgs;
 mkShell {
   inputsFrom = [ ]
     ++ lib.optionals (!isNull local-shell) [ local-shell ];
-  buildInputs = [ zsh nixfmt arion gnumake ];
+  buildInputs = [ zsh nixfmt arion yq gnumake ];
   shellHook = ''
     echo ""
     echo "---------------------------------------------------------------"
