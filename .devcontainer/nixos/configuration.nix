@@ -84,12 +84,18 @@ in {
     fi
   '';
   system.activationScripts.vscodePatch = ''
+    mkdir -p /bin
+    for f in /run/current-system/sw/bin/*; do
+      ln -sf "$(/run/current-system/sw/bin/readlink $f)" "/bin/$(basename $f)"
+    done
     if [ ! -d /lib ]; then
       ln -fs $systemConfig/sw/lib /lib
     fi
     if [ ! -d /lib64 ]; then
       ln -fs /lib /lib64
     fi
+    # allow docker socket to be owned by wheel
+    chgrp wheel /var/run/docker.sock
   '';
   system.activationScripts.ghCodespacePatch = ''
     # GitHub codespace needs node in /usr/bin
