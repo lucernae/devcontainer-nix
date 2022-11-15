@@ -16,7 +16,8 @@ services:
     tmpfs:
     - /run
     - /run/wrappers
-    - /tmp:exec,mode=777
+    # You can enable tmpfs in local vscode, but GitHub Codespace doesn't like this.
+    # - /tmp:exec,mode=777
     tty: true
     volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
