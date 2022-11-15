@@ -84,6 +84,12 @@ in {
       ln -fs /lib /lib64
     fi
   '';
+  system.activationScripts.ghCodespacePatch = ''
+    # GitHub codespace needs node in /usr/bin
+    if [ ! -f /usr/bin/node ]; then
+      ln -fs $systemConfig/sw/bin/node /usr/bin/node
+    fi
+  '';
 
   system.nssModules = lib.mkForce [ ];
   system.stateVersion = "22.05";
