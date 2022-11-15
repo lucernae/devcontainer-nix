@@ -28,7 +28,9 @@ in {
   environment.systemPackages = with pkgs; [
     vim
     zsh
+    git
     nodejs
+    acl
     arion
     docker-client
     devcontainer-patch
@@ -89,6 +91,8 @@ in {
     if [ ! -f /usr/bin/node ]; then
       ln -fs $systemConfig/sw/bin/node /usr/bin/node
     fi
+    # allow nix to build using /tmp in codespace
+    setfacl -k /tmp
   '';
 
   system.nssModules = lib.mkForce [ ];
