@@ -69,9 +69,14 @@ in {
     group = "vscode";
     extraGroups = [ "wheel" "docker" ];
   };
-  security.sudo.configFile = ''
-    %wheel  ALL=(ALL:ALL) NOPASSWD: ALL
-  '';
+  security.sudo.extraRules = [{
+    runAs = "root";
+    groups = [ "wheel" ];
+    commands = [{
+      command = "ALL";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
 
   system.activationScripts.installInitScript = ''
     if [ ! -f /usr/sbin/init ]; then
@@ -92,7 +97,7 @@ in {
       ln -fs $systemConfig/sw/bin/node /usr/bin/node
     fi
     # allow nix to build using /tmp in codespace
-    setfacl -k /tmp
+    $systemConfig/sw/bin/setfacl -k /tmp
   '';
 
   system.nssModules = lib.mkForce [ ];
