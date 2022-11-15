@@ -94,8 +94,6 @@ in {
     if [ ! -d /lib64 ]; then
       ln -fs /lib /lib64
     fi
-    # allow docker socket to be owned by wheel
-    chgrp wheel /var/run/docker.sock
   '';
   system.activationScripts.ghCodespacePatch = ''
     # GitHub codespace needs node in /usr/bin
