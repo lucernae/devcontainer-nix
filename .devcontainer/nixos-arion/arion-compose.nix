@@ -18,10 +18,10 @@
     image.contents = [
       (pkgs.runCommand "lib-link" {} ''
         mkdir -p $out $out/bin
-        ln -sf ${config.nixos.build.toplevel}/sw/lib $out/lib
-        ln -sf ${config.nixos.build.toplevel}/sw/lib $out/lib64
+        ln -sf ${config.nixos.build.toplevel}/sw/lib $out/lib || true
+        ln -sf ${config.nixos.build.toplevel}/sw/lib $out/lib64 || true
         for f in ${config.nixos.build.toplevel}/sw/bin/*; do
-          ln -sf $(readlink $f) $out/bin
+          ln -sf $(${config.nixos.build.toplevel}/sw/bin/readlink $f) "$out/bin/$(${config.nixos.build.toplevel}/sw/bin/basename $f)"
         done
       '')
     ];
@@ -35,7 +35,6 @@
     # you can enable useHostStore if your host is nixos
     # service.useHostStore = true;
     # service.useHostNixDaemon = true;
-    service.environment.LD_LIBRARY_PATH = "/lib:/run/current-system/sw/lib";
     service.ports = [
       # you can port forward
       # "8080:80" # host:container
