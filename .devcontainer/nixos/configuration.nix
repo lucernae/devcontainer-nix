@@ -85,8 +85,8 @@ in {
   '';
   system.activationScripts.vscodePatch = ''
     mkdir -p /bin
-    for f in /run/current-system/sw/bin/*; do
-      ln -sf "$(/run/current-system/sw/bin/readlink $f)" "/bin/$(basename $f)"
+    for f in $systemConfig/sw/bin/*; do
+      ln -sf "$(readlink $f)" "/bin/$(basename $f)"
     done
     if [ ! -d /lib ]; then
       ln -fs $systemConfig/sw/lib /lib
