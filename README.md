@@ -1,5 +1,7 @@
 # Devcontainer for Nix
 
+[![Open the repo in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=511455788)
+
 VSCode devcontainer for Nix
 
 This devcontainer contains Nix and hooks to install nix recipe as devcontainers.
@@ -18,7 +20,9 @@ In your own repo, simply copy our [.devcontainer](.devcontainer) directory and e
 
 - [default](.devcontainer/default/): minimal example on how to use the devcontainer with direnv
 - [development](.devcontainer/development/): my preferred way of using GitHub Codespace to bootstrap this own repo's development
-- [home-manager](.devcontainer/home-manager/): use flake URI to fetch your home-manager config to setup the devcontainer
+- [home-manager](.devcontainer/home-manager/): (TBD) use flake URI to fetch your home-manager config to setup the devcontainer
+- [nixos](.devcontainer/nixos-arion/): use a [codespace template](https://github.com/lucernae/codespaces-nixos-template) to bootstrap a NixOS as a container.
+  You can then use NixOS capabilities, such as systemd services definitions, NixOS modules, etc.
 
 # Development
 
@@ -41,3 +45,30 @@ Running the stack locally:
 make up
 ```
 
+# Supporting and Contributing
+
+If you like this project, show your love. Even feedbacks are most appreciated.
+
+## Sponsoring
+
+You can sponsor this project to help me experiment with the codespace, since I mostly run out of codespace 
+storage quota pretty quickly. The storage was mostly used when you are experimenting with lots of 
+packages that fills out Nix store. The final image itself is less than 1GB. By sponsoring, I can avoid
+running low of storage quotas.
+
+## Contributing
+
+There are no clear guideline yet. Since this is a template, you can contribute your own recipes, and I can 
+publish it as a branch so people can use it quickly. Do you have some cool examples on how to use Nix, Nix flakes, or Home Manager? Feel free to publish it here. You might be helping someone.
+
+Do you have some problem with Nix? You can even use this template so people can see and try out your 
+configuration to debug the problem.
+
+## Not able to sponsor or contribute?
+
+No worries, spreading the words or starring the repo might help as well. Thank you!
+
+# References/Remarks
+
+- Thanks to [Arion](https://github.com/hercules-ci/arion). I built the image in Nix using this tools.
+- Thanks to Nix Community who helps and provides docs/articles for introverts like me.
