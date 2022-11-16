@@ -28,7 +28,9 @@ in {
   environment.systemPackages = with pkgs; [
     vim
     zsh
+    git
     nodejs
+    acl
     arion
     docker-client
     devcontainer-patch
@@ -67,9 +69,14 @@ in {
     group = "vscode";
     extraGroups = [ "wheel" "docker" ];
   };
-  security.sudo.configFile = ''
-    %wheel  ALL=(ALL:ALL) NOPASSWD: ALL
-  '';
+  security.sudo.extraRules = [{
+    runAs = "root";
+    groups = [ "wheel" ];
+    commands = [{
+      command = "ALL";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
 
   system.activationScripts.installInitScript = ''
     if [ ! -f /usr/sbin/init ]; then
@@ -77,12 +84,24 @@ in {
     fi
   '';
   system.activationScripts.vscodePatch = ''
+    mkdir -p /bin
+    for f in $systemConfig/sw/bin/*; do
+      ln -sf "$(readlink $f)" "/bin/$(basename $f)"
+    done
     if [ ! -d /lib ]; then
       ln -fs $systemConfig/sw/lib /lib
     fi
     if [ ! -d /lib64 ]; then
       ln -fs /lib /lib64
     fi
+  '';
+  system.activationScripts.ghCodespacePatch = ''
+    # GitHub codespace needs node in /usr/bin
+    if [ ! -f /usr/bin/node ]; then
+      ln -fs $systemConfig/sw/bin/node /usr/bin/node
+    fi
+    # allow nix to build using /tmp in codespace
+    $systemConfig/sw/bin/setfacl -k /tmp
   '';
 
   system.nssModules = lib.mkForce [ ];
