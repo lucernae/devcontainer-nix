@@ -29,6 +29,19 @@
         # needed for GH codespace
         ln -sf "$(readlink $configSystem/sw/bin/node)" $out/usr/bin/node
       '')
+
+        # needed by vscode and GH codespace to search for users using /etc/passwd
+        # we only define minimal values (will be overwritten by init)
+      (pkgs.writeTextFile {
+          name = "temporary-etc-passwd";
+          text = ''
+            root:x:0:0:System administrator:/root:/run/current-system/sw/bin/bash
+            vscode:x:1000:1000::/home/vscode:/run/current-system/sw/bin/bash
+            nobody:x:65534:65534:Unprivileged account (don't use!):/var/empty:/run/current-system/sw/bin/nologin
+          '';
+          destination = "/etc/passwd";
+        } 
+      )
     ];
     # the image tag is defined by arion-pkgs.nix overrides,
     # since we have no way of injecting the tag at the moment.
