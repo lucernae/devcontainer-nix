@@ -17,12 +17,15 @@
     image.enableRecommendedContents = true;
     image.contents = [
       (pkgs.runCommand "lib-link" {} ''
-        mkdir -p $out $out/bin
+        # needed for vscode
+        mkdir -p $out $out/bin $out/usr/bin
         ln -sf ${config.nixos.build.toplevel}/sw/lib $out/lib || true
         ln -sf ${config.nixos.build.toplevel}/sw/lib $out/lib64 || true
         for f in ${config.nixos.build.toplevel}/sw/bin/*; do
           ln -sf $(${config.nixos.build.toplevel}/sw/bin/readlink $f) "$out/bin/$(${config.nixos.build.toplevel}/sw/bin/basename $f)"
         done
+        # needed for GH codespace
+        ln -sf $(${config.nixos.build.toplevel}/sw/bin/readlink ${config.nixos.build.toplevel}/sw/bin/node) $out/usr/bin/node
       '')
     ];
     # the image tag is defined by arion-pkgs.nix overrides,
