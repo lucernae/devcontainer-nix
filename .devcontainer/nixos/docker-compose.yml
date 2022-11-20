@@ -17,19 +17,19 @@ services:
     # array). The sample below assumes your primary file is in the root of your project.
     #
     # uncomment the build section when you want to rebuild
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - IMAGE_TAG=main
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   args:
+    #     - IMAGE_TAG=main
     image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools
     privileged: true
     tty: true
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ../../:/workspace:cached
-      - ./configuration.nix:/etc/nixos/configuration.nix
-      - ./devcontainer-patch.nix:/etc/nixos/devcontainer-patch.nix
+      - ./etc/nixos/configuration.nix:/etc/nixos/configuration.nix
+      - ./etc/nixos/devcontainer-patch.nix:/etc/nixos/devcontainer-patch.nix
 
       # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
       - /var/run/docker.sock:/var/run/docker.sock
