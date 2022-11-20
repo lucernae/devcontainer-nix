@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - .devcontainer/nixos-arion/**
+      - .devcontainer/nixos/etc/**
     branches:
       - develop
   push:
@@ -11,6 +12,7 @@ on:
       - v*
     paths:
       - .devcontainer/nixos-arion/**
+      - .devcontainer/nixos/etc/**
     branches:
       - develop
       - main
@@ -110,7 +112,7 @@ jobs:
         with:
           images: ghcr.io/lucernae/devcontainer-nix
           tags: |
-            type=semver,pattern=\d.\d.\d
+            type=semver,pattern=v\d.\d.\d
             type=ref,event=branch
             type=ref,event=pr
 

@@ -9,7 +9,7 @@ in {
   # boot.tmpOnTmpfs = true;
   networking = {
     # machine hostname
-    hostName = "devcontainer";
+    hostName = lib.mkForce "devcontainer";
     # networking settings for containers
     firewall.enable = false;
     # for some reason, dhcpcd doesn't work nicely
