@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/lib $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
-    cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
+    ln -sf "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
   '';
   meta = {
     description = "VS Code devcontainer with Nix";

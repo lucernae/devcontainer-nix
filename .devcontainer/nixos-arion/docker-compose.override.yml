@@ -12,7 +12,6 @@ services:
       # Systemd related mount
       # override cgroup mount to rw if ro doesn't work. but probably insecure.
       - /sys/fs/cgroup:/sys/fs/cgroup:rw 
-
     environment:
       LD_LIBRARY_PATH: /lib:/run/current-system/sw/lib
       NIX_REMOTE: "daemon"

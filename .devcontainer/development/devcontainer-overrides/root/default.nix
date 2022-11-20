@@ -8,8 +8,8 @@ stdenv.mkDerivation rec {
   dontBuild = true;
   installPhase = ''
     mkdir -p $out/bin
-    cp "${sudo}/bin/sudo" $out/bin/sudo
-    cp "${su}/bin/su" $out/bin/su
+    ln -s "${sudo}/bin/sudo" $out/bin/sudo
+    ln -s "${su}/bin/su" $out/bin/su
     runHook postInstall
   '';
   postInstall = ''
