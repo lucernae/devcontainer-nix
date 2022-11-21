@@ -79,10 +79,19 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/lucernae/devcontainer-nix
+          flavor: |
+            latest=false
+            prefix=nixos-dockertools---
           tags: |
-            type=semver,pattern=v\d.\d.\d
+            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=nixos-dockertools,prefix=,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
             type=ref,event=branch
             type=ref,event=pr
+            type=ref,event=tag
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
 
       - name: Build and push
         id: docker_build
@@ -90,7 +99,7 @@ jobs:
         with:
           context: .devcontainer/nixos
           push: true
-          tags: ${{ steps.docker_meta.outputs.tags }}--nixos-dockertools
+          tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: |
             type=gha,scope=test

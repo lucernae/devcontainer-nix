@@ -68,10 +68,18 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/lucernae/devcontainer-nix
+          flavor: |
+            latest=false
           tags: |
-            type=semver,pattern=v\d.\d.\d
+            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
             type=ref,event=branch
             type=ref,event=pr
+            type=ref,event=tag
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
 
       - name: Build and push
         id: docker_build
