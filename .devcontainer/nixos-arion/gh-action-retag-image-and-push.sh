@@ -4,6 +4,6 @@
 
 for tag in ${1//,/ }
 do
-    docker tag ghcr.io/lucernae/devcontainer-nix:nixos--arion $tag
+    docker tag ghcr.io/lucernae/devcontainer-nix:nixos-arion $tag
     docker push $tag
 done
