@@ -156,4 +156,4 @@ jobs:
         working-directory: .devcontainer/nixos-arion
         run: |
            make a-build config retag-image
-           bash gh-action-retag-image-and-push.sh ${{ steps.docker_meta.outputs.tags }}
+           bash gh-action-retag-image-and-push.sh "${{ steps.docker_meta.outputs.tags }}"
