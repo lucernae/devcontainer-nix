@@ -1,0 +1,10 @@
+version: '3'
+services:
+  devcontainer:
+    image: ghcr.io/lucernae/devcontainer-nix:flake---latest
+    build:
+      dockerfile: Dockerfile-flake
+      args:
+        # - NIXOS_VERSION=22.11
+        - MAIN_NIX_CHANNEL=https://nixos.org/channels/nixpkgs-unstable
+        - HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/master.tar.gz

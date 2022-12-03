@@ -21,13 +21,13 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir -p $out/lib $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
-    cp "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
-    cp "${sudo}/bin/sudo" $out/bin/sudo
-    cp "${su}/bin/su" $out/bin/su
-    cp "${which}/bin/which" $out/bin/which
+    ln -sf "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib/libstdc++.so.6
+    ln -sf "${sudo}/bin/sudo" $out/bin/sudo
+    ln -sf "${su}/bin/su" $out/bin/su
+    ln -sf "${which}/bin/which" $out/bin/which
   '';
   meta = {
-    priority = "7";
+    priority = 7;
     description = "VS Code devcontainer with Nix";
     maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];
   };

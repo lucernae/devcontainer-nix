@@ -6,7 +6,7 @@ let
     null;
 in with pkgs;
 mkShell {
-  inputsFrom = [ (import ./default.nix { }) ]
+  inputsFrom = [ (import ./default.nix { inherit pkgs; }) ]
     ++ lib.optionals (!isNull local-shell) [ local-shell ];
   buildInputs = [ zsh nixfmt nixpkgs-fmt nodejs ];
   shellHook = ''

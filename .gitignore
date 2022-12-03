@@ -4,5 +4,6 @@
 .idea
 .direnv
 .local.envrc
+docker-compose.override.yml
 result
 result-*
