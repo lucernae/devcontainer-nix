@@ -4,11 +4,12 @@ let
     (import ./local-shell.nix { inherit pkgs; })
   else
     null;
+  NPM_CONFIG_PREFIX = toString ./.npm_config_prefix;
 in with pkgs;
 mkShell {
   inputsFrom = [ (import ./default.nix { inherit pkgs; }) ]
     ++ lib.optionals (!isNull local-shell) [ local-shell ];
-  buildInputs = [ zsh nixfmt nixpkgs-fmt nodejs ];
+  buildInputs = [ zsh nixfmt nixpkgs-fmt nodejs yarn nodePackages.npm ];
   shellHook = ''
     echo ""
     echo "---------------------------------------------------------------"
@@ -17,5 +18,7 @@ mkShell {
     echo "Use: \"printenv\" to print current environment variable"
     echo "---------------------------------------------------------------"
     echo ""
+    npm set prefix ${NPM_CONFIG_PREFIX}
+    export PATH="${NPM_CONFIG_PREFIX}/bin:$PATH"
   '';
 }
