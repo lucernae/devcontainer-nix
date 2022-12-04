@@ -1,0 +1,141 @@
+{
+    "id": "nix",
+    "version": "1.0.1",
+    "name": "Devcontainer with Nix",
+    "description": "Devcontainer with configurable Nix support. Declare your favorite development environment using Nix, and reproduce the environment inside the devcontainers",
+    "documentationURL": "https://github.com/lucernae/devcontainer-nix/tree/main/templates/src/nix",
+    "licenseURL": "https://github.com/lucernae/devcontainer-nix/blob/main/LICENSE",
+    "options": {
+        "useDirenv": {
+            "type": "bool",
+            "description": "Install direnv and automatically activates the repo when direnv configuration exists",
+            "default": true
+        },
+        "useFlake": {
+            "type": "bool",
+            "description": "Add Nix Flake Experimental configuration to use Nix Flake",
+            "default": true
+        },
+        "installRootPackages": {
+            "type": "string",
+            "description": "Install additional nix packages at build time as root. Package list syntax follows nix flake or nix-env commands, depending on which mode you activated.",
+            "default": "",
+            "proposals": [
+                "nixpkgs.vim nixpkgs.git",
+                "nixpkgs#vim nixpkgs#git"
+            ]
+        },
+        "prebuildDefaultPackage": {
+            "type": "string",
+            "description": "If specified, run nix-build on the default.nix package inside the repository. It can be a comma separated lists of package location to be built",
+            "default": "",
+            "proposals": [
+                "default.nix"
+            ]
+        },
+        "prebuildNixShell": {
+            "type": "string",
+            "description": "If specified, run nix-build on shell.nix package inside the repository. It can be a comma separated lists of package location to be built",
+            "default": "",
+            "proposals": [
+                "shell.nix"
+            ]
+        },
+        "prebuildFlake": {
+            "type": "string",
+            "description": "If specified, run `nix build` on the specified flake URI (can be a remote URI). It can be a comma separated lists of flake URI to be built",
+            "default": "",
+            "proposals": [
+                "flake.nix",
+                "github:owner/repository",
+                "github:owner/repository/ref",
+                "github:owner/repository/ref?dir=directory",
+                "github:owner/repository#outputName.outputChildName"
+            ]
+        },
+        "prebuildFlakeRun": {
+            "type": "string",
+            "description": "Like prebuildFlake, but uses `nix run`",
+            "default": "",
+            "proposals": [
+                "flake.nix",
+                "github:owner/repository",
+                "github:owner/repository/ref",
+                "github:owner/repository/ref?dir=directory",
+                "github:owner/repository#outputName.outputChildName"
+            ]
+        },
+        "prebuildFlakeDevelop": {
+            "type": "string",
+            "description": "Like prebuildFlake, but uses `nix develop`",
+            "default": "",
+            "proposals": [
+                "flake.nix",
+                "github:owner/repository",
+                "github:owner/repository/ref",
+                "github:owner/repository/ref?dir=directory",
+                "github:owner/repository#outputName.outputChildName"
+            ]
+        },
+        "additionalNixChannel": {
+            "type": "string",
+            "description": "Comma separated list of {channel-name}={channel-url} to add. You can also override current nixpkgs channel by setting the channel name to nixpkgs",
+            "default": "",
+            "proposals": [
+                "nixpkgs-unstable=https://nixos.org/channels/nixpkgs-unstable",
+                "home-manager=https://github.com/nix-community/home-manager/archive/master.tar.gz"
+            ]
+        },
+        "additionalNixFlakeRegistry": {
+            "type": "string",
+            "description": "Comma separated list of {flake-name}={flake-registry-uri} to add. You can also override current nixpkgs registry by setting the registry name to nixpkgs",
+            "default": "",
+            "proposals": [
+                "nixpkgs=github:NixOS/nixpkgs/nixos-unstable",
+                "home-manager=https://github.com/nix-community/home-manager/archive/release-master.tar.gz"
+            ]
+        },
+        "prebuildHomeManager": {
+            "type": "string",
+            "description": "If specified, install home-manager and activates configuration in a given location.",
+            "default": "",
+            "proposals": [
+                ".devcontainer/home.nix"
+            ]
+        },
+        "prebuildHomeManagerFlake": {
+            "type": "string",
+            "description": "like prebuildHomeManager, but uses Nix Flake URI to specify configuration",
+            "default": "",
+            "proposals": [
+                "flake.nix",
+                "github:owner/repository",
+                "github:owner/repository/ref",
+                "github:owner/repository/ref?dir=directory",
+                "github:owner/repository#outputName.outputChildName"
+            ]
+        },
+        "imageVariant": {
+            "type": "string",
+            "description": "Debian version (use bullseye on local arm64/Apple Silicon):",
+            "proposals": [
+                "v1",
+                "flake---v1",
+                "nixos-dockertools---v1",
+                "nixos-arion---v1",
+                "latest",
+                "flake",
+                "nixos-dockertools",
+                "nixos-arion",
+                "stable",
+                "flake---stable",
+                "nixos-dockertools---stable",
+                "nixos-arion---stable"
+            ],
+            "default": "v1"
+        }
+    },
+    "platforms": [
+        "Any"
+    ]
+}
