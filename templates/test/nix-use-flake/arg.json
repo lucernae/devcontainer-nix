@@ -1,0 +1,9 @@
+{
+    "useDirenv": "true",
+    "useFlake": "true",
+    "installRootPackages": "nixpkgs#curl",
+    "prebuildFlake": ".",
+    "prebuildFlakeDevelop": ".",
+    "prebuildFlakeRun": ".",
+    "imageVariant": "flake"
+}

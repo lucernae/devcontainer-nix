@@ -13,6 +13,7 @@ jobs:
         with:
           filters: |
             nix-use-direnv: ./**/nix-use-direnv/**
+            nix-use-flake: ./**/nix-use-flake/**
 
   test:
     needs: [detect-changes]
