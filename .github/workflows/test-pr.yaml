@@ -12,8 +12,7 @@ jobs:
         id: filter
         with:
           filters: |
-            color: ./**/color/**
-            hello: ./**/hello/**
+            nix-use-direnv: ./**/nix-use-direnv/**
 
   test:
     needs: [detect-changes]
