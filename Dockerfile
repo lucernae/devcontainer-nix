@@ -71,7 +71,8 @@ RUN nix-env -if ${USER_HOME_DIR}/packages.nix
 # Direnv bashrc hook
 RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_DIR}/.bashrc" && \
     . "${USER_HOME_DIR}/.bashrc" && \
-    echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc"
+    echo 'eval "$(direnv hook bash)"' >> "${USER_HOME_DIR}/.bashrc" && \
+    echo 'eval "$(direnv hook zsh)"' >> "${USER_HOME_DIR}/.zshrc"
 
 # default.nix package to install
 # useful to preload packages on docker build phase, rather than on runtime

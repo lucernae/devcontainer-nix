@@ -1,6 +1,0 @@
-{
-    "useDirenv": "true",
-    "useFlake": "false",
-    "prebuildDefaultPackage": "default.nix",
-    "prebuildNixShell": "shell.nix"
-}
