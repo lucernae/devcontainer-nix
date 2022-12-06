@@ -117,7 +117,7 @@
         },
         "imageVariant": {
             "type": "string",
-            "description": "Debian version (use bullseye on local arm64/Apple Silicon):",
+            "description": "devcontainer image variant",
             "proposals": [
                 "v1",
                 "flake---v1",

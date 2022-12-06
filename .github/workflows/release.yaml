@@ -27,7 +27,7 @@ jobs:
           publish-templates: "true"
           base-path-to-templates: "./templates/src"
           generate-docs: "true"
-          template-namespace: "${{ steps.set-namespace.outputs.namespace }}"
+          templates-namespace: "${{ steps.set-namespace.outputs.namespace }}"
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
