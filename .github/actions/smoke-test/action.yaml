@@ -14,9 +14,9 @@ runs:
     - name: Build template
       id: build_template
       shell: bash
-      run: ${{ github.action_path }}/build.sh ${{ inputs.template }}
+      run: ${{ github.action_path }}/build.sh nix templates/test/${{ inputs.template }}
 
     - name: Test template
       id: test_template
       shell: bash
-      run: ${{ github.action_path }}/test.sh  ${{ inputs.template }}
+      run: ${{ github.action_path }}/test.sh nix templates/test/${{ inputs.template }}

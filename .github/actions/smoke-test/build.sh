@@ -12,7 +12,7 @@ if [[ -z "$BASE_SRC_DIR" ]]; then
 fi
 SRC_DIR="$BASE_SRC_DIR/${TEMPLATE_ID}"
 rm -rf "${SRC_DIR}"
-cp -fR "src/${TEMPLATE_ID}" "${SRC_DIR}"
+cp -fR "templates/src/${TEMPLATE_ID}" "${SRC_DIR}"
 
 pushd "${SRC_DIR}"
 
@@ -64,7 +64,7 @@ if [ -d "${TEST_DIR}" ] ; then
     DEST_DIR="${SRC_DIR}/test-project"
     mkdir -p ${DEST_DIR}
     cp -Rp ${TEST_DIR}/* ${DEST_DIR}
-    cp test/test-utils/test-utils.sh ${DEST_DIR}
+    cp templates/test/test-utils/test-utils.sh ${DEST_DIR}
 fi
 
 export DOCKER_BUILDKIT=1
