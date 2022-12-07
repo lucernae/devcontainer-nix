@@ -6,9 +6,9 @@ source test-project/test-utils.sh
 check "direnv status" direnv status
 check "root packages installed" curl --version
 check "check nix build" nix build
-check "check nix develop" nix develop --command hello
+check "check nix develop" nix develop --check
 check "check nix run" nix run
-check "direnv executed" nix-shell --run  'if [ "$MY_HOOK" == "true" ]; then echo "$MY_HOOK"; else exit 1; fi'
+check "direnv executed" nix develop --command bash -c 'if [ "$MY_HOOK" == "true" ]; then echo "$MY_HOOK"; else exit 1; fi'
 
 # Report result
 reportResults
