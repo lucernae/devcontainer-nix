@@ -13,9 +13,9 @@ jobs:
         id: set-namespace
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "namespace=lucernae/devcontainer-nix/nix" >> $GITHUB_OUTPUT
+            echo "namespace=lucernae/devcontainer-nix" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "namespace=lucernae/devcontainer-nix/develop/nix" >> $GITHUB_OUTPUT
+            echo "namespace=lucernae/devcontainer-nix/develop" >> $GITHUB_OUTPUT
           else
             echo "namespace=" >> $GITHUB_OUTPUT
           fi
