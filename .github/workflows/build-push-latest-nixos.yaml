@@ -6,6 +6,7 @@ on:
       - .devcontainer/nixos/**
     branches:
       - develop
+      - main
   push:
     tags:
       - v*
