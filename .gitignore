@@ -5,6 +5,7 @@
 .direnv
 .local.envrc
 .npm_config_prefix
+.DS_Store
 docker-compose.override.yml
 result
 result-*

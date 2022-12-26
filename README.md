@@ -2,6 +2,8 @@
 
 [![Open the repo in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=511455788)
 
+[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/lucernae/devcontainer-nix)
+
 VSCode devcontainer for Nix
 
 This devcontainer contains Nix and hooks to install nix recipe as devcontainers.
@@ -9,12 +11,47 @@ This is the base image that can be used to extend your own devcontainer based on
 
 # How to use
 
+This repo contains devcontainer templates to make it easy to generate devcontainer configurations. If you prefer 
+a more hands on approach, you can also check out sample configuration described in the [next section](#currently-available-devcontainer-samples)
+
 In your own repo, simply copy our [.devcontainer](.devcontainer) directory and extend as necessary using the provided files that directory:
 
 - `default.nix` replace with your nix recipe. You can also include recipes in other repo by including it in this recipe
 - `Dockerfile` if you need to extend the image and include several files here
 - `docker-compose.yml` if you need to extend docker-compose recipe to do/mount extra things for your devcontainer
 - `devcontainer.json` if you need to include custom settings like extensions, etc.
+
+To generate these files using devcontainer CLI, you first need to install the CLI. It is usually packaged along VS Code's Remote Containers extensions tools. So you probably have it already.
+
+The template definition and available options is located in the [template source directory](./templates/src/nix/README.md)
+
+From your own repository directory, create a .devcontainer directory with the options JSON file
+
+```bash
+mkdir -p .devcontainer
+touch .devcontainer/args.json
+```
+
+The file `args.json` contains the options you want to activate and pass to devcontainer CLI. This is an example to use Direnv and Flake:
+
+```json
+{
+    "useDirenv": "true",
+    "useFlake": "false"
+}
+```
+
+Generate the devcontainers file using CLI, and the template package `ghcr.io/lucernae/devcontainer-nix/nix:1`:
+
+```bash
+devcontainer templates apply -t ghcr.io/lucernae/devcontainer-nix/nix:1 --workspace-folder . -a "$(cat .devcontainer/args.json)"
+```
+
+Once the files are generated, you can use VS Code's command "Reopen in Container" (available from the command palette: CTRL+SHIFT+P), or `devcontainer up` command to test the devcontainer creations:
+
+```bash
+devcontainer up --workspace-folder .
+```
 
 # Currently available devcontainer samples
 

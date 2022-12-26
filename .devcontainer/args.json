@@ -1,0 +1,7 @@
+{
+    "useDirenv": "true",
+    "useFlake": "true",
+    "prebuildDefaultPackage": "default.nix",
+    "prebuildNixShell": "shell.nix",
+    "imageVariant": "flake" 
+}
