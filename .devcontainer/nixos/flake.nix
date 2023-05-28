@@ -1,7 +1,7 @@
 {
   inputs.nix2container.url = "github:nlewo/nix2container";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
   inputs.nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs = { self, flake-utils, nixpkgs, nixpkgsUnstable, nix2container }:
