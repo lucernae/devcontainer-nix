@@ -3,6 +3,7 @@
 # this way, user can override these packages in their own setup
 set -e
 echo "package list"
+echo "nix version: $(nix --version)"
 nix profile list
 packages=('coreutils' 'procps' 'gcc' 'git-minimal' 'gnugrep' 'gnused' 'gnutar' 'gzip' 'iana-etc' 'iproute2' 'less' 'shadow' 'xz')
 for p in "${packages[@]}"
