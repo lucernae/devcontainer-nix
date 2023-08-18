@@ -98,6 +98,7 @@ jobs:
             MAIN_NIX_CHANNEL=https://nixos.org/channels/nixpkgs-unstable
             HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/master.tar.gz
           push: true
+          platforms: linux/amd64,linux/arm64/v8
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: |

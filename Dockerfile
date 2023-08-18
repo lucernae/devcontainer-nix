@@ -17,6 +17,9 @@ ARG MAIN_NIX_CHANNEL=https://nixos.org/channels/nixos-22.05
 # We use nixpkgs as name because in devcontainers we are going to use it as package manager instead of the OS
 ARG MAIN_NIX_CHANNEL_NAME=nixpkgs
 
+# Add bootstrap NIX_CONFIG if necessary
+ARG NIX_CONFIG=
+
 RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
     if [[ ! -f "/root/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "/root/.nix-profile"; fi && \
   . /nix/var/nix/profiles/default/etc/profile.d/nix.sh && \
@@ -98,6 +101,7 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
 
 # post build setup
 ADD nix.conf /etc/nix/nix.conf
+RUN echo "${NIX_CONFIG}" >> /etc/nix/nix.conf
 ADD default-packages-priority.sh ${USER_HOME_DIR}/default-packages-priority.sh
 RUN sudo chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
     && ${USER_HOME_DIR}/default-packages-priority.sh

@@ -17,11 +17,11 @@ services:
     # array). The sample below assumes your primary file is in the root of your project.
     #
     # uncomment the build section when you want to rebuild
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   args:
-    #     - IMAGE_TAG=main
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - IMAGE_TAG=main
     image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools
     privileged: true
     tty: true
