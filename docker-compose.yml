@@ -1,7 +1,13 @@
 version: '3'
 services:
   devcontainer:
-    build: .
+    build:
+      context: .
+      args:
+        - NIXOS_VERSION=nixos-${NIXOS_VERSION_STRING}
+        - MAIN_NIX_CHANNEL=https://nixos.org/channels/nixos-${NIXOS_VERSION_STRING}
+        - HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-${NIXOS_VERSION_STRING}.tar.gz
+        - NIX_CONFIG=${BOOTSTRAP_NIX_CONFIG}
     image: ghcr.io/lucernae/devcontainer-nix:latest
     user: "vscode"
     working_dir: /home/vscode

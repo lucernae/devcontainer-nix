@@ -9,7 +9,7 @@ in with pkgs;
 mkShell {
   inputsFrom = [ (import ./default.nix { inherit pkgs; }) ]
     ++ lib.optionals (!isNull local-shell) [ local-shell ];
-  buildInputs = [ zsh nixfmt nixpkgs-fmt nodejs yarn nodePackages.npm ];
+  buildInputs = [ zsh nixfmt nixpkgs-fmt nodejs yarn nodePackages.npm act ];
   shellHook = ''
     echo ""
     echo "---------------------------------------------------------------"
