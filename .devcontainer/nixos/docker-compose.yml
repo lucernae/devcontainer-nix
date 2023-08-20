@@ -21,14 +21,14 @@ services:
     #   context: .
     #   dockerfile: Dockerfile
     #   args:
-    #     - IMAGE_TAG=main
+    #     - IMAGE_TAG=latest---23.05
     image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---23.05
     privileged: true
     tty: true
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ../../:/workspace:cached
-      # - ./etc/nixos/configuration.nix:/etc/nixos/configuration.nix
+      - ./etc/nixos/configuration.nix:/etc/nixos/configuration.nix
       # - ./etc/nixos/devcontainer-patch.nix:/etc/nixos/devcontainer-patch.nix
 
       # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
@@ -47,7 +47,9 @@ services:
     environment:
       container: "docker"
       PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
+      NIX_LD_LIBRARY_PATH: "/run/current-system/sw/share/nix-ld/lib"
       LD_LIBRARY_PATH: "/lib:/run/current-system/sw/lib"
+      NIX_LD: "/nix/store/2zhqnzjmizb20i1x5zgvzplqd030h69i-ld.so"
       TMPDIR: "/cont/tmp"
       
     cap_add:

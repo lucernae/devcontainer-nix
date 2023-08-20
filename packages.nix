@@ -15,6 +15,7 @@ buildEnv {
     findutils
     openssh
     gnupg
+    getent
   ];
   meta = {
     description = "VS Code devcontainer packages Nix";
