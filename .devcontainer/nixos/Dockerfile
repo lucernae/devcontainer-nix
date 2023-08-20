@@ -13,7 +13,8 @@ WORKDIR /usr/share/nixos-build
 ADD . /usr/share/nixos-build/.
 RUN nix-build container-tarball.nix
 RUN mkdir -p ./extracted \
-    && tar -xf result/tarball/nixos-system-x86_64-linux.tar -C extracted
+    && export NIX_ARCH=$(nix eval --impure --raw --expr 'builtins.currentSystem') \
+    && tar -xf result/tarball/nixos-system-${NIX_ARCH}.tar -C extracted
     
 # we have no way of passing link location to the next stage, so we pass 
 # it as files
@@ -39,5 +40,4 @@ RUN $(cat /path.txt)/activate || true \
 
 # initial path
 ENV PATH=/bin:/usr/sbin
-ENV LD_LIBRARY_PATH=/lib
 CMD [ "/usr/sbin/init" ]

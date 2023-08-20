@@ -100,8 +100,11 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
     && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config
 
 # post build setup
+USER root
 ADD nix.conf /etc/nix/nix.conf
-RUN sudo chmod +rw /etc/nix/nix.conf && echo "${NIX_CONFIG}" >> /etc/nix/nix.conf
+RUN echo "${NIX_CONFIG}" >> /etc/nix/nix.conf
+
+USER ${USERNAME}
 ADD default-packages-priority.sh ${USER_HOME_DIR}/default-packages-priority.sh
 RUN sudo chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
     && ${USER_HOME_DIR}/default-packages-priority.sh

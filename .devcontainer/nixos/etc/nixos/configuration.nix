@@ -4,7 +4,7 @@ in {
   boot = {
     # settings to enable booting as OCI containers
     isContainer = true;
-    tmpOnTmpfs = true;
+    tmp.useTmpfs = true;
   };
   # boot.tmpOnTmpfs = true;
   networking = {
@@ -78,6 +78,13 @@ in {
     }];
   }];
 
+  programs.nix-ld.enable = true;
+  # environment.variables.NIX_LD_LIBRARY_PATH = lib.makeLibraryPath [
+  #   pkgs.stdenv.cc.cc
+  #   pkgs.glibc
+  # ];
+  # environment.variables.NIX_LD = lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker";
+
   system.activationScripts.installInitScript = ''
     mkdir -p /usr/sbin
     if [ ! -f /usr/sbin/init ]; then
@@ -95,6 +102,9 @@ in {
     if [ ! -d /lib64 ]; then
       ln -fs /lib /lib64
     fi
+    for f in libgcc_s.so.1 libdl.so.2; do
+      ln -fs $systemConfig/sw/lib/$f /lib/$f
+    done
   '';
   system.activationScripts.ghCodespacePatch = ''
     # GitHub codespace needs node in /usr/bin
