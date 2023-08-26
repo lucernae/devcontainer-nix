@@ -1,5 +1,5 @@
 ARG NIXOS_VERSION=nixos-22.05
-FROM nixpkgs/devcontainer:${NIXOS_VERSION}
+FROM ghcr.io/lucernae/nix-community/nixpkgs/devcontainer:${NIXOS_VERSION}
 
 # In the case that users need non-root user
 # See https://aka.ms/vscode-remote/containers/non-root-user
@@ -19,6 +19,8 @@ ARG MAIN_NIX_CHANNEL_NAME=nixpkgs
 
 # Add bootstrap NIX_CONFIG if necessary
 ARG NIX_CONFIG=
+ADD nix.conf /etc/nix/nix.conf
+RUN echo $'\n'"${NIX_CONFIG}" >> /etc/nix/nix.conf
 
 RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
     if [[ ! -f "/root/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "/root/.nix-profile"; fi && \
@@ -100,11 +102,6 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
     && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config
 
 # post build setup
-USER root
-ADD nix.conf /etc/nix/nix.conf
-RUN echo "${NIX_CONFIG}" >> /etc/nix/nix.conf
-
-USER ${USERNAME}
 ADD default-packages-priority.sh ${USER_HOME_DIR}/default-packages-priority.sh
 RUN sudo chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
     && ${USER_HOME_DIR}/default-packages-priority.sh
