@@ -5,7 +5,7 @@ in
 {
   nix2ContainerImage = nix2container.buildImage {
     name = "ghcr.io/lucernae/devcontainer-nix";
-    tag = "nixos-dockertools";
+    tag = "nixos-dockertools--nix2container";
     # you can include more packages into the paths and nix store inside the image
     copyToRoot = pkgs.buildEnv {
       name = "default-configuration";

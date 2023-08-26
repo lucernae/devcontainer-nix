@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - IMAGE_TAG=latest---23.05
+        - IMAGE_TAG=${IMAGE_TAG}
     image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---23.05
     privileged: true
     tty: true
