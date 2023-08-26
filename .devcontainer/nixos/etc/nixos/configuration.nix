@@ -39,7 +39,7 @@ in {
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
-      extra-platforms = [ "x86_64-darwin" "aarch64-darwin" ];
+      extra-platforms = [ "x86_64-linux" "aarch64-linux" ];
     };
   };
   services = {

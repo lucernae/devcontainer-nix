@@ -15,9 +15,26 @@ on:
     branches:
       - develop
       - main
+      - fix-tests
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        docker_platform:
+          - linux/amd64
+          - linux/arm64
+        nix_channel:
+          - nixos_channel: "nixos-unstable"
+            home_manager_version_string: "master"
+            image_tag_suffix: "latest"
+            main_nix_channel: "https://nixos.org/channels/nixos-unstable"
+            home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
+          - nixos_channel: "nixos-23.05"
+            home_manager_version_string: "release-23.05"
+            image_tag_suffix: "23.05"
+            main_nix_channel: "https://nixos.org/channels/nixos-23.05"
+            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU
@@ -31,20 +48,27 @@ jobs:
           context: .devcontainer/nixos
           push: false
           load: true
-          tags: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools
+          build-args: |
+            IMAGE_TAG=latest--${{matrix.nix_channel.nixos_channel}}
+          platforms: ${{matrix.docker_platform}}
+          tags: ghcr.io/${{github.actor}}/devcontainer-nix:nixos-dockertools---${{matrix.nix_channel.nixos_channel}}
           cache-from: |
             type=gha,scope=test
             type=gha,scope=prod
           cache-to: type=gha,scope=test
 
       - name: Run docker-compose services
+        env:
+          NIXOS_VERSION: "${{matrix.nix_channel.nixos_channel}}"
+          MAIN_NIX_CHANNEL: "${{matrix.nix_channel.main_nix_channel}}"
+          HOME_MANAGER_CHANNEL: "${{matrix.nix_channel.home_manager_channel}}"
         working-directory: .devcontainer/nixos
         run: |
           docker-compose up -d
           sleep 5
           docker-compose exec -T devcontainer uname -a
 
-      - name: Run Coverage test
+      - name: Run Smoke test
         working-directory: .devcontainer/nixos
         run: |
           cat << EOF | docker-compose exec -T devcontainer bash
@@ -52,12 +76,31 @@ jobs:
           nix-env --version
           nix --version
           nix-channel --list
+          nix-channel --update
+          nix-shell -p coreutils --run 'uname -a'
+          nix-shell -p jq --run "nix eval --impure --expr 'builtins.currentSystem' | jq -r '.'"
           EOF
 
   docker-builder:
     # Only push if PR happens in the same repo
     if: github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        docker_platform:
+          - linux/amd64
+          - linux/arm64
+        nix_channel:
+          - nixos_channel: "nixos-unstable"
+            home_manager_version_string: "master"
+            image_tag_suffix: "latest"
+            main_nix_channel: "https://nixos.org/channels/nixos-unstable"
+            home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
+          - nixos_channel: "nixos-23.05"
+            home_manager_version_string: "release-23.05"
+            image_tag_suffix: "23.05"
+            main_nix_channel: "https://nixos.org/channels/nixos-23.05"
+            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
     needs:
       - test
     steps:
@@ -71,8 +114,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-
-          username: ${{ secrets.GHCR_USERNAME }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PASSWORD }}
 
       - name: Docker meta
@@ -83,6 +125,7 @@ jobs:
           flavor: |
             latest=false
             prefix=nixos-dockertools---
+            suffix=--${{matrix.nix_channel.nixos_channel}}
           tags: |
             type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=raw,value=nixos-dockertools,prefix=,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
@@ -100,6 +143,9 @@ jobs:
         with:
           context: .devcontainer/nixos
           push: true
+          build-args: |
+            IMAGE_TAG=latest--${{matrix.nix_channel.nixos_channel}}
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           cache-from: |
