@@ -15,7 +15,6 @@ on:
     branches:
       - develop
       - main
-      - fix-tests
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -49,7 +48,7 @@ jobs:
           push: false
           load: true
           build-args: |
-            IMAGE_TAG=latest--${{matrix.nix_channel.nixos_channel}}
+            IMAGE_TAG=fix-tests--${{matrix.nix_channel.image_tag_suffix}}
           platforms: ${{matrix.docker_platform}}
           tags: ghcr.io/${{github.actor}}/devcontainer-nix:nixos-dockertools---${{matrix.nix_channel.nixos_channel}}
           cache-from: |
@@ -62,6 +61,7 @@ jobs:
           NIXOS_VERSION: "${{matrix.nix_channel.nixos_channel}}"
           MAIN_NIX_CHANNEL: "${{matrix.nix_channel.main_nix_channel}}"
           HOME_MANAGER_CHANNEL: "${{matrix.nix_channel.home_manager_channel}}"
+          IMAGE_TAG: "fix-tests--${{matrix.nix_channel.image_tag_suffix}}"
         working-directory: .devcontainer/nixos
         run: |
           docker-compose up -d
@@ -69,6 +69,11 @@ jobs:
           docker-compose exec -T devcontainer uname -a
 
       - name: Run Smoke test
+        env:
+          NIXOS_VERSION: "${{matrix.nix_channel.nixos_channel}}"
+          MAIN_NIX_CHANNEL: "${{matrix.nix_channel.main_nix_channel}}"
+          HOME_MANAGER_CHANNEL: "${{matrix.nix_channel.home_manager_channel}}"
+          IMAGE_TAG: "fix-tests--${{matrix.nix_channel.image_tag_suffix}}"
         working-directory: .devcontainer/nixos
         run: |
           cat << EOF | docker-compose exec -T devcontainer bash
@@ -77,8 +82,7 @@ jobs:
           nix --version
           nix-channel --list
           nix-channel --update
-          nix-shell -p coreutils --run 'uname -a'
-          nix-shell -p jq --run "nix eval --impure --expr 'builtins.currentSystem' | jq -r '.'"
+          uname -a
           EOF
 
   docker-builder:
@@ -87,9 +91,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker_platform:
-          - linux/amd64
-          - linux/arm64
         nix_channel:
           - nixos_channel: "nixos-unstable"
             home_manager_version_string: "master"
@@ -144,7 +145,7 @@ jobs:
           context: .devcontainer/nixos
           push: true
           build-args: |
-            IMAGE_TAG=latest--${{matrix.nix_channel.nixos_channel}}
+            IMAGE_TAG=fix-tests--${{matrix.nix_channel.image_tag_suffix}}
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}

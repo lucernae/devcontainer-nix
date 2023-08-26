@@ -20,6 +20,13 @@ RUN mkdir -p ./extracted \
 # it as files
 RUN echo "$(readlink ./extracted/rootfs)" > current-system-closure-path.txt
 
+# copy library needed by vscode remote server from debian
+FROM mcr.microsoft.com/devcontainers/base as linux-lib
+
+# conditional check if the image used is aarch64, then create fake directory 
+# /lib32 and /lib64 that is only presents in x86_64
+RUN mkdir -p /lib /lib32 /lib64
+
 # copy rootfs
 # for some reason, scratch doesn't work for vscode devcontainer
 FROM busybox AS final
@@ -32,6 +39,11 @@ COPY --from=build /usr/share/nixos-build/etc/nixos/devcontainer-patch.nix /etc/n
 COPY --from=build /usr/share/nixos-build/extracted/rootfs/sw/bin /bin
 # retrieve the nix closure path for the init bootstrap
 COPY --from=build /usr/share/nixos-build/current-system-closure-path.txt /path.txt
+
+# retrieve standard linux library for compatibility with vscode remote-server
+COPY --from=linux-lib /lib /lib
+COPY --from=linux-lib /lib32 /lib32
+COPY --from=linux-lib /lib64 /lib64
 
 # creating symlink for systemd init at container boot
 RUN $(cat /path.txt)/activate || true \
