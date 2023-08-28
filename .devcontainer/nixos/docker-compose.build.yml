@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
       args:
         - IMAGE_TAG=${IMAGE_TAG}
-    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---23.05
+    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---latest
     privileged: true
     tty: true
     volumes:
@@ -47,7 +47,6 @@ services:
     environment:
       container: "docker"
       PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
-      LD_LIBRARY_PATH: "/lib:/run/current-system/sw/lib"
       TMPDIR: "/cont/tmp"
       
     cap_add:

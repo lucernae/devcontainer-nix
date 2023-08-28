@@ -16,11 +16,7 @@ services:
     # docker-compose.yml file (the first in the devcontainer.json "dockerComposeFile"
     # array). The sample below assumes your primary file is in the root of your project.
     #
-    # image: ghcr.io/lucernae/devcontainer-nix:v1
-    image: ghcr.io/lucernae/devcontainer-nix:latest---23.05
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile-new
+    image: ghcr.io/lucernae/devcontainer-nix:v1
     # build:
     #   context: .
     #   dockerfile: Dockerfile
@@ -28,6 +24,7 @@ services:
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ../../:/workspaces:cached
+      - ./nix.conf:/etc/nix/nix.conf
 
       # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
       # - /var/run/docker.sock:/var/run/docker.sock
