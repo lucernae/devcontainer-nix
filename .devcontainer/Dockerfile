@@ -13,6 +13,7 @@ ENV ADDITIONAL_NIX_FLAKE_REGISTRY=""
 ENV PREBUILD_HOME_MANAGER=""
 ENV PREBUILD_HOME_MANAGER_FLAKE=""
 
+COPY ./nix.conf /etc/nix/nix.conf
 COPY library-scripts /library-scripts
 
 RUN bash /library-scripts/build/all.sh

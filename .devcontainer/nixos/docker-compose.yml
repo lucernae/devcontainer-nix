@@ -17,13 +17,12 @@ services:
     # array). The sample below assumes your primary file is in the root of your project.
     #
     # uncomment the build section when you want to rebuild
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        # - IMAGE_TAG=${IMAGE_TAG}
-        - IMAGE_TAG=develop--23.05
-    # image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---fix-tests--nixos-23.05
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   args:
+    #     - IMAGE_TAG=${IMAGE_TAG}
+    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---latest
     privileged: true
     tty: true
     volumes:
@@ -49,8 +48,6 @@ services:
       container: "docker"
       PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
       TMPDIR: "/cont/tmp"
-      # NIX_LD_LIBRARY_PATH: "/run/current-system/sw/share/nix-ld/lib"
-      # NIX_LD: "/nix/store/2zhqnzjmizb20i1x5zgvzplqd030h69i-ld.so"
       
     cap_add:
         - SYS_ADMIN
