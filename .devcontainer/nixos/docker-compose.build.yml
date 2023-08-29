@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
       args:
         - IMAGE_TAG=${IMAGE_TAG}
-    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---latest
+    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools--nixos-23.05---latest
     privileged: true
     tty: true
     volumes:
