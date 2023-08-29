@@ -33,6 +33,8 @@ jobs:
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
             # TODO(lucernae): fix me with stable tag
             base_image_tag: "pr-33--nixos-23.05"
+    outputs:
+      docker_output_tags: ${{steps.docker_meta.outputs.tags[0]}}
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU
@@ -119,7 +121,7 @@ jobs:
         working-directory: .devcontainer/nixos
         env:
           DOCKER_PLATFORM: "${{matrix.docker_platform}}"
-          DEVCONTAINER_IMAGE_TAG: "${{jobs.docker-build.steps.docker_meta.outputs.tags[0]}}"
+          DEVCONTAINER_IMAGE_TAG: "${{needs.docker-build.outputs.docker_output_tags}}"
         run: |
           docker-compose up -d
           sleep 5
@@ -129,7 +131,7 @@ jobs:
         working-directory: .devcontainer/nixos
         env:
           DOCKER_PLATFORM: "${{matrix.docker_platform}}"
-          DEVCONTAINER_IMAGE_TAG: "${{jobs.docker-build.steps.docker_meta.outputs.tags[0]}}"
+          DEVCONTAINER_IMAGE_TAG: "${{needs.docker-build.outputs.docker_output_tags}}"
         run: |
           cat << EOF | docker-compose exec -T devcontainer bash
           node --version
