@@ -19,6 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         nix_system:
           - "x86_64-linux"
@@ -60,6 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url }}
     strategy:
+      fail-fast: false
       matrix:
         nix_channel:
           - "nixos-unstable"
