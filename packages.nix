@@ -8,7 +8,6 @@ buildEnv {
     git
     direnv # needed for direnv hook
     nix-direnv # needed for nix-direnv hook
-    acl # needed to change /tmp default ACL for nix build process
     ncurses
     nodejs # to support vscode devcontainers process/hooks
     gawk
@@ -16,6 +15,8 @@ buildEnv {
     openssh
     gnupg
     getent
+  ] ++ lib.optionals stdenv.hostPlatform.isLinux [
+    acl # needed to change /tmp default ACL for nix build process
   ];
   meta = {
     description = "VS Code devcontainer packages Nix";

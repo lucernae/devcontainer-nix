@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
     stdenv.cc.cc.lib
   ];
   dontBuild = true;
-  installPhase = ''
+  installPhase = if stdenv.hostPlatform.isLinux then ''
     mkdir -p $out/lib $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
     # ln -sf "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
     # # ld-linux-aarch64.so.1 is needed by vscode-server's in arm architecture
     # ln -s "${glibc}/lib/ld-linux-aarch64.so.1" $out/lib
     # ln -s "${glibc}/lib/ld-linux-aarch64.so.1" $out/lib/ld-linux.so.1
-  '';
+  '' else "";
   meta = {
     description = "VS Code devcontainer with Nix";
     maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];
