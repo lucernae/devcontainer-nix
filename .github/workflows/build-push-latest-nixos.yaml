@@ -19,6 +19,7 @@ jobs:
   docker-build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         nix_channel:
           - nixos_channel: "nixos-unstable"
@@ -89,6 +90,7 @@ jobs:
     needs:
       - docker-build
     strategy:
+      fail-fast: false
       matrix:
         docker_platform:
           - linux/amd64
