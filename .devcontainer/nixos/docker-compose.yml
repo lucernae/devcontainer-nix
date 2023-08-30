@@ -21,8 +21,7 @@ services:
     #   context: .
     #   dockerfile: Dockerfile
     #   args:
-    #     - IMAGE_TAG=${IMAGE_TAG}
-    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    #     - NIXOS_VERSION=${NIXOS_VERSION}
     image: ${DEVCONTAINER_IMAGE_TAG:-ghcr.io/lucernae/devcontainer-nix:nixos-dockertools--nixos-unstable---latest}
     privileged: true
     tty: true
