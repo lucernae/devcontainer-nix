@@ -5,6 +5,8 @@ FROM ghcr.io/lucernae/nix-community/nixpkgs/devcontainer:${NIXOS_VERSION} AS bui
 
 USER root
 
+ADD ./nix.conf /etc/nix/nix.conf
+
 RUN mkdir -p /usr/share/nixos-build \
     && nix-channel --update
 
