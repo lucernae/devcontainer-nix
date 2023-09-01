@@ -67,7 +67,7 @@ jobs:
           context: .devcontainer/nixos
           push: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url }}
           build-args: |
-            IMAGE_TAG=${{matrix.nix_channel.nixos_channel}}---develop
+            NIXOS_VERSION=${{matrix.nix_channel.nixos_channel}}
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
