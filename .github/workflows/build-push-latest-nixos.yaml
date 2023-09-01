@@ -26,14 +26,10 @@ jobs:
             home_manager_version_string: "master"
             main_nix_channel: "https://nixos.org/channels/nixos-unstable"
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
-            # TODO(lucernae): fix me with stable tag
-            base_image_tag: "pr-33--nixos-unstable"
           - nixos_channel: "nixos-23.05"
             home_manager_version_string: "release-23.05"
             main_nix_channel: "https://nixos.org/channels/nixos-23.05"
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
-            # TODO(lucernae): fix me with stable tag
-            base_image_tag: "pr-33--nixos-23.05"
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU
@@ -71,7 +67,7 @@ jobs:
           context: .devcontainer/nixos
           push: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url }}
           build-args: |
-            IMAGE_TAG=${{matrix.nix_channel.base_image_tag}}
+            IMAGE_TAG=${{matrix.nix_channel.nixos_channel}}---develop
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}

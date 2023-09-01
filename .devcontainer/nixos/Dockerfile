@@ -1,4 +1,4 @@
-ARG NIXOS_VERSION=nixos-22.05
+ARG NIXOS_VERSION=nixos-23.05
 # any docker image with nix will do. 
 # we basically want to use the nix tools then throw it away
 FROM ghcr.io/lucernae/nix-community/nixpkgs/devcontainer:${NIXOS_VERSION} AS build
