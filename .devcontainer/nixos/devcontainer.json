@@ -30,7 +30,7 @@
 	// "shutdownAction": "none",
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
-	"postCreateCommand": "bash -c \"systemctl start nix-daemon && systemctl start dbus && nix-channel --update\"",
+	"postCreateCommand": "bash -c \"(/usr/sbin/init --system || true) && systemctl start nix-daemon && systemctl start dbus && nix-channel --update\"",
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "root"

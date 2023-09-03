@@ -17,12 +17,12 @@ services:
     # array). The sample below assumes your primary file is in the root of your project.
     #
     # uncomment the build section when you want to rebuild
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   args:
-    #     - NIXOS_VERSION=${NIXOS_VERSION}
-    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools--nixos-23.05---latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NIXOS_VERSION=${NIXOS_VERSION}
+    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools--${NIXOS_VERSION}---latest
     privileged: true
     tty: true
     volumes:
