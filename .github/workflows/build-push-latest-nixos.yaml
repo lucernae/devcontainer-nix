@@ -26,10 +26,12 @@ jobs:
             home_manager_version_string: "master"
             main_nix_channel: "https://nixos.org/channels/nixos-unstable"
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
+            default_tag: false
           - nixos_channel: "nixos-23.05"
             home_manager_version_string: "release-23.05"
             main_nix_channel: "https://nixos.org/channels/nixos-23.05"
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
+            default_tag: true
     steps:
       - uses: actions/checkout@v3
       - name: Set up QEMU
@@ -52,7 +54,9 @@ jobs:
             prefix=nixos-dockertools--${{matrix.nix_channel.nixos_channel}}---
           tags: |
             type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=nixos-dockertools--${{matrix.nix_channel.nixos_channel}},prefix=,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
+            type=raw,value=stable${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=latest${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
             type=ref,event=branch
             type=ref,event=pr
             type=ref,event=tag
@@ -60,6 +64,10 @@ jobs:
             type=semver,pattern=v{{major}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{version}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}.{{minor}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}.{{minor}}.{{patch}}
       - name: Build image
         id: docker_build
         uses: docker/build-push-action@v4

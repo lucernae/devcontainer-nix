@@ -68,6 +68,10 @@ jobs:
             type=semver,pattern=v{{major}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=' || '' }},pattern=v{{version}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=' || '' }},pattern=v{{major}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=' || '' }},pattern=v{{major}}.{{minor}}
+            type=semver${{ matrix.nix_channel.default_tag && ',prefix=' || '' }},pattern=v{{major}}.{{minor}}.{{patch}}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v4
