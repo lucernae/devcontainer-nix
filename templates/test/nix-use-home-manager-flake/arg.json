@@ -1,0 +1,5 @@
+{
+    "useFlake": "true",
+    "prebuildHomeManagerFlake": ".",
+    "imageVariant": "flake---latest"
+}

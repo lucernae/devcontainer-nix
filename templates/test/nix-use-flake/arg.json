@@ -5,5 +5,5 @@
     "prebuildFlake": ".",
     "prebuildFlakeDevelop": ".",
     "prebuildFlakeRun": ".",
-    "imageVariant": "flake"
+    "imageVariant": "flake---latest"
 }

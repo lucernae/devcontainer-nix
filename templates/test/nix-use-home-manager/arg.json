@@ -1,0 +1,4 @@
+{
+    "prebuildHomeManager": "vscode.nix",
+    "imageVariant": "flake---latest"
+}
