@@ -14,6 +14,8 @@ jobs:
           filters: |
             nix-use-direnv: ./**/nix-use-direnv/**
             nix-use-flake: ./**/nix-use-flake/**
+            nix-use-home-manager: ./**/nix-use-home-manager/**
+            nix-use-home-manager-flake: ./**/nix-use-home-manager-flake/**
 
   test:
     needs: [detect-changes]
