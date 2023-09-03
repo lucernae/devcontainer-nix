@@ -3,12 +3,14 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - flake.lock
       - .github/workflows/build-base.yaml
     branches:
       - develop
       - main
   push:
     paths:
+      - flake.lock
       - .github/workflows/build-base.yaml
     tags:
       - v*

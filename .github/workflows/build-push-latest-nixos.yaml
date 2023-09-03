@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - .devcontainer/nixos/**
+      - .github/workflows/build-push-latest-nixos.yaml
     branches:
       - develop
       - main
@@ -12,6 +13,7 @@ on:
       - v*
     paths:
       - .devcontainer/nixos/**
+      - .github/workflows/build-push-latest-nixos.yaml
     branches:
       - develop
       - main

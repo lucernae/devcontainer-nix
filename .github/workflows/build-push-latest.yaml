@@ -2,10 +2,18 @@ name: latest-build
 on:
   workflow_dispatch:
   pull_request:
+    paths:
+      - Dockerfile
+      - flake.lock
+      - .github/workflows/build-push-latest.yaml
     branches:
       - develop
       - main
   push:
+    paths:
+      - Dockerfile
+      - flake.lock
+      - .github/workflows/build-push-latest.yaml
     tags:
       - v*
     branches:
