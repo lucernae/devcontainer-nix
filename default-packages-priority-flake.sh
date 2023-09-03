@@ -18,10 +18,10 @@ nix-env -iA nixpkgs.nix nixpkgs.cacert
 echo "uninstalling done"
 nix profile list
 
-packages=('coreutils' 'procps' 'gcc' 'gitMinimal' 'gnugrep' 'gnused' 'gnutar' 'gzip' 'iana-etc' 'iproute2' 'less' 'shadow' 'xz')
+packages=('coreutils' 'gcc' 'gitMinimal' 'gnugrep' 'gnused' 'gnutar' 'gzip' 'iana-etc' 'iproute2' 'less' 'shadow' 'xz')
 
 # test nix flake version, if priority flag available
-if nix profile install --priority 7 coreutils; then
+if nix profile install --priority 8 nixpkgs#coreutils; then
     priorityFlag=true
 else
     priorityFlag=""

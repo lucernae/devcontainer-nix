@@ -44,7 +44,7 @@ ADD default.nix /root/default.nix
 ADD packages.nix /root/packages.nix
 ADD default-packages-priority-flake.sh /root/default-packages-priority-flake.sh
 RUN bash /root/default-packages-priority-flake.sh
-RUN nix profile install /root#devcontainer-root
+RUN nix profile install --priority 6 /root#devcontainer-root
 
 # default entrypoint
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
@@ -76,7 +76,7 @@ WORKDIR "${USER_HOME_DIR}"
 
 # List of default packages to install to be available on default profile
 # This is needed for process that is executed before direnv can be hooked
-RUN nix profile install /root#devcontainer-packages
+RUN nix profile install --priority 6 /root#devcontainer-packages
 
 # Direnv bashrc hook
 RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_DIR}/.bashrc" && \
@@ -87,7 +87,7 @@ RUN echo ". ${USER_HOME_DIR}/.nix-profile/etc/profile.d/nix.sh" >> "${USER_HOME_
 # default.nix package to install
 # useful to preload packages on docker build phase, rather than on runtime
 # if you have custom packages to install, simply override the default.nix recipe in your own devcontainer
-RUN nix profile install /root#devcontainer
+RUN nix profile install --priority 6 /root#devcontainer
 
 # Home manager support
 ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz 
@@ -102,7 +102,7 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
     && export NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
     && nix-channel --update \
     && mkdir -p ${USER_HOME_DIR}/.config/nixpkgs \
-    && nix profile install home-manager#home-manager \
+    && nix profile install --priority 6 home-manager#home-manager \
     && chown -R ${USERNAME}:${USERNAME} ${USER_HOME_DIR}/.config
 
 # Entrypoint takes directory to activate direnv as first parameter. The rest of the parameters is the command executed by direnv
