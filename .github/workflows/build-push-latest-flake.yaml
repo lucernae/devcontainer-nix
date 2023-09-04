@@ -61,7 +61,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ github.actor }}/devcontainer-nix
+          images: ghcr.io/lucernae/devcontainer-nix
           flavor: |
             latest=false
             prefix=flake--${{matrix.nix_channel.nixos_channel}}---
