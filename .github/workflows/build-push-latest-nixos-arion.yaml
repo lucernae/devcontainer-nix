@@ -33,7 +33,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Set up nix store cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/nix-closure
           key: nix-store-${{ hashFiles('.devcontainer/nixos-arion') }}
@@ -132,7 +132,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Set up nix store cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/nix-closure
           key: nix-store-${{ hashFiles('.devcontainer/nixos-arion') }}
