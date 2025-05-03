@@ -8,6 +8,7 @@ VSCode devcontainer for Nix
 
 This devcontainer contains Nix and hooks to install nix recipe as devcontainers.
 This is the base image that can be used to extend your own devcontainer based on nix.
+It includes several fixes to ensure a robust Nix environment initialization, addressing common issues with script paths and user profile setup.
 
 # How to use
 

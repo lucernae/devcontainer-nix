@@ -1,5 +1,11 @@
-{ config, lib, options, pkgs, ... }:
-let devcontainer-patch = import ./devcontainer-patch.nix { inherit pkgs; };
+{
+  config,
+  lib,
+  options,
+  pkgs,
+  ...
+}: let
+  devcontainer-patch = import ./devcontainer-patch.nix {inherit pkgs;};
 in {
   boot = {
     # settings to enable booting as OCI containers
@@ -17,7 +23,7 @@ in {
     useHostResolvConf = false;
     dhcpcd.enable = lib.mkOverride 0 false;
     # fallback dns
-    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+    nameservers = ["1.1.1.1" "8.8.8.8"];
   };
   # networking.firewall.enable = false;
   # networking.useNetworkd = false;
@@ -38,8 +44,8 @@ in {
   ];
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      extra-platforms = [ "x86_64-linux" "aarch64-linux" ];
+      experimental-features = ["nix-command" "flakes"];
+      extra-platforms = ["x86_64-linux" "aarch64-linux"];
     };
   };
   services = {
@@ -67,16 +73,20 @@ in {
     name = "vscode";
     home = "/home/vscode";
     group = "vscode";
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = ["wheel" "docker"];
   };
-  security.sudo.extraRules = [{
-    runAs = "root";
-    groups = [ "wheel" ];
-    commands = [{
-      command = "ALL";
-      options = [ "NOPASSWD" ];
-    }];
-  }];
+  security.sudo.extraRules = [
+    {
+      runAs = "root";
+      groups = ["wheel"];
+      commands = [
+        {
+          command = "ALL";
+          options = ["NOPASSWD"];
+        }
+      ];
+    }
+  ];
 
   programs.nix-ld.enable = true;
   # environment.variables.NIX_LD_LIBRARY_PATH = lib.makeLibraryPath [
@@ -115,6 +125,6 @@ in {
     $systemConfig/sw/bin/setfacl -k /tmp
   '';
 
-  system.nssModules = lib.mkForce [ ];
+  system.nssModules = lib.mkForce [];
   system.stateVersion = "22.05";
 }

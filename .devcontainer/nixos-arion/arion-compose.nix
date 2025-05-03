@@ -1,6 +1,15 @@
-{ pkgs, config, ... }: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   project.name = "systemd";
-  services.devcontainer = { config, pkgs, lib, ... }: {
+  services.devcontainer = {
+    config,
+    pkgs,
+    lib,
+    ...
+  }: {
     nixos.useSystemd = true;
     nixos.configuration = import ./../nixos/configuration.nix;
     service.volumes = [
@@ -17,22 +26,23 @@
     image.enableRecommendedContents = true;
     image.contents = [
       (pkgs.runCommand "lib-link" {
-        configSystem = "${config.nixos.build.toplevel}";
-      } ''
-        # needed for vscode
-        mkdir -p $out $out/bin $out/usr/bin $out/etc
-        ln -sf $configSystem/sw/lib $out/lib || true
-        ln -sf $configSystem/sw/lib $out/lib64 || true
-        for f in $configSystem/sw/bin/*; do
-          ln -sf "$(readlink $f)" "$out/bin/$(basename $f)"
-        done
-        # needed for GH codespace
-        ln -sf "$(readlink $configSystem/sw/bin/node)" $out/usr/bin/node
-      '')
+          configSystem = "${config.nixos.build.toplevel}";
+        } ''
+          # needed for vscode
+          mkdir -p $out $out/bin $out/usr/bin $out/etc
+          ln -sf $configSystem/sw/lib $out/lib || true
+          ln -sf $configSystem/sw/lib $out/lib64 || true
+          for f in $configSystem/sw/bin/*; do
+            ln -sf "$(readlink $f)" "$out/bin/$(basename $f)"
+          done
+          # needed for GH codespace
+          ln -sf "$(readlink $configSystem/sw/bin/node)" $out/usr/bin/node
+        '')
 
-        # needed by vscode and GH codespace to search for users using /etc/passwd
-        # we only define minimal values (will be overwritten by init)
-      (pkgs.writeTextFile {
+      # needed by vscode and GH codespace to search for users using /etc/passwd
+      # we only define minimal values (will be overwritten by init)
+      (
+        pkgs.writeTextFile {
           name = "temporary-etc-passwd";
           text = ''
             root:x:0:0:System administrator:/root:/run/current-system/sw/bin/bash
@@ -40,7 +50,7 @@
             nobody:x:65534:65534:Unprivileged account (don't use!):/var/empty:/run/current-system/sw/bin/nologin
           '';
           destination = "/etc/passwd";
-        } 
+        }
       )
     ];
     # the image tag is defined by arion-pkgs.nix overrides,

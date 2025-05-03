@@ -1,6 +1,6 @@
-{ pkgs ? import <nixpkgs> { } }:
+{pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell {
-  buildInputs = [ (import ./default.nix { inherit pkgs; }) ];
+  buildInputs = [(import ./default.nix {inherit pkgs;})];
   shellHook = ''
     export MY_HOOK="true"
   '';
