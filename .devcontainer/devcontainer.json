@@ -7,7 +7,7 @@
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
-		"docker-compose.yml"
+		"./docker-compose.yml"
 	],
 
 	"overrideCommand": false,
@@ -22,7 +22,8 @@
 
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+		"USE_DIRENV": "true"
 	},
 
 	// Use 'forwardPorts' to make a list of qqports inside the container available locally.
@@ -34,8 +35,8 @@
 	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
 	// "shutdownAction": "none",
 
-	// Uncomment the next line to run commands after the container is created - for example installing curl.
-	"postCreateCommand": "bash /library-scripts/runtime/postCreateCommand.sh",
+	// Use the path that we know works after our Dockerfile changes
+	"postCreateCommand": "bash /usr/local/lib/library-scripts/runtime/postCreateCommand.sh || echo 'Post-create command failed, continuing anyway'",
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
@@ -47,7 +48,8 @@
 				"arrterian.nix-env-selector",
 				"bbenoist.Nix",
 				"jnoortheen.nix-ide",
-				"brettm12345.nixfmt-vscode"
+				"brettm12345.nixfmt-vscode",
+				"mkhl.direnv"
 			]
 		}
 	}
