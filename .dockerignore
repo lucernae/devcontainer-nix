@@ -1,3 +1,6 @@
 .devcontainer
 .github
 .direnv
+
+# Allow .devcontainer/library-scripts
+!.devcontainer/library-scripts
