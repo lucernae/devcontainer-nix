@@ -16,10 +16,10 @@ services:
     # docker-compose.yml file (the first in the devcontainer.json "dockerComposeFile"
     # array). The sample below assumes your primary file is in the root of your project.
     #
-    image: ghcr.io/lucernae/devcontainer-nix:v1
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    # image: ghcr.io/lucernae/devcontainer-nix:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
     privileged: true
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
@@ -32,8 +32,7 @@ services:
     hostname: devcontainer
 
     environment:
-      NIX_MULTI_USER: "true"
-      NIX_REMOTE: "daemon"
+      VSCODE_SERVER_CUSTOM_GLIBC_LINKER: "true"
 
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     # cap_add:

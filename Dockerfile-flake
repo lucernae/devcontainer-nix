@@ -63,6 +63,8 @@ RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
 
+COPY root/os-release /etc/os-release
+
 # Userspace block
 USER ${USERNAME}
 

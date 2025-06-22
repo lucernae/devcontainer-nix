@@ -57,6 +57,8 @@ RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
 
+COPY root/os-release /etc/os-release
+
 # Userspace block
 USER ${USERNAME}
 
@@ -103,8 +105,10 @@ RUN . /nix/var/nix/profiles/default/etc/profile.d/nix.sh \
 
 # post build setup
 ADD default-packages-priority.sh ${USER_HOME_DIR}/default-packages-priority.sh
-RUN sudo chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
-    && ${USER_HOME_DIR}/default-packages-priority.sh
+USER root
+RUN chmod +x ${USER_HOME_DIR}/default-packages-priority.sh \
+    && ${USER_HOME_DIR}/default-packages-priority.sh \
+USER ${USERNAME}
 
 # Entrypoint takes directory to activate direnv as first parameter. The rest of the parameters is the command executed by direnv
 ENTRYPOINT [ "./entrypoint.sh", "." ]
