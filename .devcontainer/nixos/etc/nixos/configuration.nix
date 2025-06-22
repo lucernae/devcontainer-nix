@@ -34,6 +34,7 @@ in {
     nodejs
     acl
     docker-client
+    docker-compose
     devcontainer-patch
   ];
   nix = {
