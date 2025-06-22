@@ -1,8 +1,10 @@
-{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> { inherit system; }, nix2container }:
-let
-  container = (import ./container-definition.nix { inherit system pkgs; }).container;
-in
 {
+  system ? builtins.currentSystem,
+  pkgs ? import <nixpkgs> {inherit system;},
+  nix2container,
+}: let
+  container = (import ./container-definition.nix {inherit system pkgs;}).container;
+in {
   nix2ContainerImage = nix2container.buildImage {
     name = "ghcr.io/lucernae/devcontainer-nix";
     tag = "nixos-dockertools--nix2container";
@@ -15,6 +17,6 @@ in
       ];
     };
     initializeNixDatabase = true;
-    config = { Cmd = [ "${container}/init" ]; };
+    config = {Cmd = ["${container}/init"];};
   };
 }

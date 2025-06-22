@@ -1,10 +1,10 @@
 {pkgs ? import <nixpkgs> {}}:
 pkgs.buildEnv {
-    name="my-package";
-    paths = [
-        pkgs.hello
-    ];
-    meta = {
-        mainProgram = "hello";
-    };
+  name = "my-package";
+  paths = [
+    pkgs.hello
+  ];
+  meta = {
+    mainProgram = "hello";
+  };
 }

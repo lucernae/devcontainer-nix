@@ -22,6 +22,12 @@ ARG NIX_CONFIG=
 ADD nix.conf /etc/nix/nix.conf
 RUN echo $'\n'"${NIX_CONFIG}" >> /etc/nix/nix.conf
 
+# Create symbolic link for library-scripts to ensure they are found at a consistent path (/library-scripts)
+# This addresses potential issues where scripts might expect this specific location.
+RUN mkdir -p /usr/local/lib/library-scripts/runtime/ && ln -sf /usr/local/lib/library-scripts /library-scripts
+
+# Ensure Nix profile and channels are initialized for the root user during build
+# This prevents potential errors if root needs to run Nix commands later.
 RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
     if [[ ! -f "/root/.nix-profile" ]]; then ln -sf /nix/var/nix/profiles/default "/root/.nix-profile"; fi && \
   . /nix/var/nix/profiles/default/etc/profile.d/nix.sh && \
