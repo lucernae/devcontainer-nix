@@ -28,7 +28,9 @@ RUN mkdir -p "/root" && touch "/root/.nix-channels" && \
   nix-channel --add ${MAIN_NIX_CHANNEL} ${MAIN_NIX_CHANNEL_NAME} && \
   nix-channel --update
 
-RUN chown $USER_UID:$USER_GID /nix \
+RUN mkdir -p ${USER_HOME_DIR} \
+  && chown $USER_UID:$USER_GID ${USER_HOME_DIR} \
+  && chown $USER_UID:$USER_GID /nix \
   && chown $USER_UID:$USER_GID /nix/store \
   && chown -R $USER_UID:$USER_GID /nix/var
 
