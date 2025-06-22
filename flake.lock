@@ -30,11 +30,11 @@
         "nixpkgs-25-05": "nixpkgs-25-05"
       },
       "locked": {
-        "lastModified": 1750572237,
-        "narHash": "sha256-b9XBjNo5lID2ZdxdDvIudB/1s6Lzax6dxTIJgJQZ1io=",
+        "lastModified": 1750572697,
+        "narHash": "sha256-yjV/w4nf7uKbBUpgtUZVXuPdIhORs1zI8OxMxMLJyxY=",
         "owner": "lucernae",
         "repo": "docker-nixpkgs",
-        "rev": "e13f25d0921c84eac5e4af0c491343836bd5c041",
+        "rev": "bfc72feae53aca831847016500fbd528f64435e0",
         "type": "github"
       },
       "original": {
@@ -83,11 +83,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1692799911,
-        "narHash": "sha256-3eihraek4qL744EvQXsK1Ha6C3CR7nnT8X2qWap4RNk=",
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "f9e7cf818399d17d347f847525c5a5a8032e4e44",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
         "type": "github"
       },
       "original": {
