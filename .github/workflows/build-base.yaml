@@ -42,7 +42,7 @@ jobs:
             filter-syscalls = false
             experimental-features = nix-command flakes
             extra-platforms = aarch64-linux
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flakehub-cache-action@main
       - name: Nix Build Base Images
         run: |
           nix build '.#packages.${{matrix.nix_system}}.base-devcontainer."${{matrix.nix_channel}}"'
