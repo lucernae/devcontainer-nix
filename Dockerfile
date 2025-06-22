@@ -45,19 +45,18 @@ RUN nix-env -if /root/default.nix
 ADD entrypoint.sh ${USER_HOME_DIR}/entrypoint.sh
 RUN chmod +x ${USER_HOME_DIR}/entrypoint.sh \
     && chmod u+s $(readlink -f $(command -v sudo)) \
-    && echo "root ALL=(root) NOPASSWD:ALL" >> /etc/sudoers \
-    && echo "#includedir /etc/sudoers.d" >> /etc/sudoers \
     && mkdir -p /etc/sudoers.d \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
-    && chmod 0440 /etc/sudoers.d/${USERNAME} \
-    && chown ${USERNAME}:${USERNAME} /nix/store
+    && chmod -R 0440 /etc/sudoers.d \
+    && mkdir -p /nix/var/log/nix \
+    && chown ${USERNAME}:${USERNAME} /nix/store /nix/var
 
 # VS-Code patch so that devcontainer detects available shells
 RUN echo "/nix/var/nix/profiles/default/bin/bash" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/zsh" >> /etc/shells \
     && echo "/nix/var/nix/profiles/default/bin/nix-shell" >> /etc/shells
 
-COPY root/os-release /etc/os-release
+COPY root/etc /etc
 
 # Userspace block
 USER ${USERNAME}

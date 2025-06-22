@@ -1,0 +1,2 @@
+root ALL=(root) NOPASSWD: ALL
+#includedir /etc/sudoers.d

@@ -18,6 +18,7 @@ services:
       NIX_REMOTE: "daemon"
       container: "docker"
       PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
+      VSCODE_SERVER_CUSTOM_GLIBC_LINKER: "true"
       
     cap_add:
         - SYS_ADMIN
