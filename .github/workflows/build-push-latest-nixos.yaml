@@ -72,7 +72,7 @@ jobs:
             type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}.{{minor}}.{{patch}}
       - name: Build image
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: .devcontainer/nixos
           push: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url }}
