@@ -79,6 +79,15 @@ in {
   }];
 
   programs.nix-ld.enable = true;
+  environment.sessionVariables = pkgs.lib.mkMerge [
+    (pkgs.lib.mkIf (pkgs.stdenv.hostPlatform.system == "aarch64-linux") {
+      VSCODE_SERVER_CUSTOM_GLIBC_LINKER = "/lib/ld-linux-aarch64.so.1";
+    })
+    (pkgs.lib.mkIf (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
+      VSCODE_SERVER_CUSTOM_GLIBC_LINKER = "/lib64/ld-linux-x86-64.so.2";
+    })
+  ];
+
   # environment.variables.NIX_LD_LIBRARY_PATH = lib.makeLibraryPath [
   #   pkgs.stdenv.cc.cc
   #   pkgs.glibc
