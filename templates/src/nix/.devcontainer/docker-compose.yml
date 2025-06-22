@@ -33,6 +33,7 @@ services:
     environment:
       NIX_MULTI_USER: "true"
       NIX_REMOTE: "daemon"
+      VSCODE_SERVER_CUSTOM_GLIBC_LINKER: "true"
 
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     # cap_add:
