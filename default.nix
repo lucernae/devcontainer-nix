@@ -4,10 +4,7 @@ stdenv.mkDerivation rec {
   pname = "devcontainer";
   version = "1.0";
   src = ./.;
-  propagatedBuildInputs = [
-    makeWrapper
-    stdenv.cc.cc.lib
-  ];
+  propagatedBuildInputs = [ makeWrapper stdenv.cc.cc.lib ];
   dontBuild = true;
   installPhase = if stdenv.hostPlatform.isLinux then ''
     mkdir -p $out/lib $out/bin
@@ -19,7 +16,8 @@ stdenv.mkDerivation rec {
     # # ld-linux-aarch64.so.1 is needed by vscode-server's in arm architecture
     # ln -s "${glibc}/lib/ld-linux-aarch64.so.1" $out/lib
     # ln -s "${glibc}/lib/ld-linux-aarch64.so.1" $out/lib/ld-linux.so.1
-  '' else "";
+  '' else
+    "";
   meta = {
     description = "VS Code devcontainer with Nix";
     maintainers = [ "Rizky Maulana Nugraha <lana.pcfre@gmail.com>" ];

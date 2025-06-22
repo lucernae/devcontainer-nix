@@ -32,10 +32,10 @@ jobs:
             main_nix_channel: "https://nixos.org/channels/nixos-unstable"
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
             default_tag: false
-          - nixos_channel: "nixos-23.05"
-            home_manager_version_string: "release-23.05"
-            main_nix_channel: "https://nixos.org/channels/nixos-23.05"
-            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
+          - nixos_channel: "nixos-25.05"
+            home_manager_version_string: "release-25.05"
+            main_nix_channel: "https://nixos.org/channels/nixos-25.05"
+            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz"
             default_tag: true
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
@@ -116,10 +116,10 @@ jobs:
 #            home_manager_version_string: "master"
 #            main_nix_channel: "https://nixos.org/channels/nixos-unstable"
 #            home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
-#          - nixos_channel: "nixos-23.05"
-#            home_manager_version_string: "release-23.05"
-#            main_nix_channel: "https://nixos.org/channels/nixos-23.05"
-#            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz"
+#          - nixos_channel: "nixos-25.05"
+#            home_manager_version_string: "release-25.05"
+#            main_nix_channel: "https://nixos.org/channels/nixos-25.05"
+#            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz"
 #    needs:
 #      - docker-build
 #    steps:

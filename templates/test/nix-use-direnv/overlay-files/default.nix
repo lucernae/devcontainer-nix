@@ -1,7 +1,5 @@
-{pkgs ? import <nixpkgs> {}}:
+{ pkgs ? import <nixpkgs> { } }:
 pkgs.buildEnv {
-    name="my-package";
-    paths = [
-        pkgs.hello
-    ];
+  name = "my-package";
+  paths = [ pkgs.hello ];
 }

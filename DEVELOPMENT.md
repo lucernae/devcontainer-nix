@@ -65,7 +65,7 @@ For each OCI image we produce, it will have the following anatomy:
 
     c. `<component>--<version>` tag signifies additional components with the component version. 
        For example `flake--latest` means using the latest Nix flake support.
-       `flake--nixos-23.05` means using Nix flake from channel `nixos-23.05`
+       `flake--nixos-25.05` means using Nix flake from channel `nixos-25.05`
     
     d. `---<cal-ver>` or `---v<sem-ver>` this is the suffix of the tag used to canonically associate the image with 
        the git tag producing the image.

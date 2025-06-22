@@ -1,14 +1,7 @@
-{ config, pkgs, ... }:
-{
-  home.packages = with pkgs; [
-    htop
-    zsh
-    vim
-  ];
+{ config, pkgs, ... }: {
+  home.packages = with pkgs; [ htop zsh vim ];
 
-  home.sessionVariables = {
-    MY_VAR = "Foo";
-  };
+  home.sessionVariables = { MY_VAR = "Foo"; };
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

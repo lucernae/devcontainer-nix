@@ -1,5 +1,5 @@
-{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> { inherit system; } }:
-{
+{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> { inherit system; }
+}: {
   container = (import (pkgs.path + "/nixos/lib/eval-config.nix") {
     inherit system;
     modules = [

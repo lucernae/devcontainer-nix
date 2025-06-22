@@ -4,7 +4,9 @@ import <nixpkgs> {
   config = {
     packageOverrides = pkgs: {
       dockerTools.streamLayeredImage = args:
-        let newArgs = args // {}; # { tag = "nixos-arion"; created = "now"; }; # useful to extends the attrset of arguments
+        let
+          newArgs = args
+            // { }; # { tag = "nixos-arion"; created = "now"; }; # useful to extends the attrset of arguments
         in pkgs.dockerTools.streamLayeredImage newArgs;
     };
   };

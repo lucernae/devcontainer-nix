@@ -18,7 +18,7 @@ mkShell {
     echo "Use: \"printenv\" to print current environment variable"
     echo "---------------------------------------------------------------"
     echo ""
-    npm set prefix ${NPM_CONFIG_PREFIX}
-    export PATH="${NPM_CONFIG_PREFIX}/bin:$PATH"
+    #    npm set prefix ${NPM_CONFIG_PREFIX}
+    #    export PATH="${NPM_CONFIG_PREFIX}/bin:$PATH"
   '';
 }

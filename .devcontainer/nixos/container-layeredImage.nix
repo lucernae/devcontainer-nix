@@ -1,9 +1,9 @@
-{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> { inherit system; } }:
+{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> { inherit system; }
+}:
 let
-  container = (import ./container-definition.nix { inherit system pkgs; }).container;
-in
-with pkgs;
-{
+  container =
+    (import ./container-definition.nix { inherit system pkgs; }).container;
+in with pkgs; {
   # this is the output if you want to create a docker image and load it using:
   # ./result | docker load
   layeredImage = dockerTools.streamLayeredImage {

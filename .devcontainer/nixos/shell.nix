@@ -1,12 +1,10 @@
 { pkgs ? import <nixpkgs> { } }:
 let
-  local-shell =
-    if builtins.pathExists ./local-shell.nix then
-      (import ./local-shell.nix { inherit pkgs; })
-    else
-      null;
-in
-with pkgs;
+  local-shell = if builtins.pathExists ./local-shell.nix then
+    (import ./local-shell.nix { inherit pkgs; })
+  else
+    null;
+in with pkgs;
 mkShell {
   inputsFrom = [ ] ++ lib.optionals (!isNull local-shell) [ local-shell ];
   buildInputs = [ zsh nixfmt yq skopeo python3 gzip file ];
