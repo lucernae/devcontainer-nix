@@ -9,7 +9,7 @@ stdenv.mkDerivation rec {
   installPhase = if stdenv.hostPlatform.isLinux then ''
     mkdir -p $out/lib $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
-    # ln -sf "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib
+    # ln -sf "${stdenv.cc.cc.lib}/lib/libstdc++.so.6" $out/lib
     # # ld-linux-x86-64.so.2 is needed by vscode-server's nodejs in case it install 32 bit nodejs
     # ln -s "${glibc}/lib64/ld-linux-x86-64.so.2" $out/lib64
     # ln -s "${glibc}/lib64/ld-linux-x86-64.so.2" $out/lib64/ld-linux.so.2

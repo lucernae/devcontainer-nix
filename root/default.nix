@@ -16,13 +16,14 @@ stdenv.mkDerivation rec {
     sudo
     su
     which
+    getconf
     stdenv.cc.cc.lib
   ];
   dontBuild = true;
   installPhase = ''
     mkdir -p $out/lib $out/bin
     # libstdc++.so.6 is needed by vscode-server's nodejs
-    ln -sf "${stdenv.cc.cc.lib}/lib64/libstdc++.so.6" $out/lib/libstdc++.so.6
+    ln -sf "${stdenv.cc.cc.lib}/lib/libstdc++.so.6" $out/lib/libstdc++.so.6
     ln -sf "${sudo}/bin/sudo" $out/bin/sudo
     ln -sf "${su}/bin/su" $out/bin/su
     ln -sf "${which}/bin/which" $out/bin/which
