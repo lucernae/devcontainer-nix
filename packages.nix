@@ -15,6 +15,7 @@ buildEnv {
     openssh
     gnupg
     getent
+    getconf
   ] ++ lib.optionals stdenv.hostPlatform.isLinux [
     acl # needed to change /tmp default ACL for nix build process
   ];

@@ -7,6 +7,7 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [
     makeWrapper
     # needed for vscode-server
+    glibc
     zsh
     nodejs
     gawk
