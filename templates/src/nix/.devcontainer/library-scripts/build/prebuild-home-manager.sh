@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ -n "${PREBUILD_HOME_MANAGER}" ]]; then
+if [[ -n "${PREBUILD_HOME_MANAGER}" || -n "${PREBUILD_HOME_MANAGER_FLAKE}" ]]; then
     echo "prebuilding home-manager"
     if ! command -v home-manager &>/dev/null; then
         echo "home-manager not found, attempting to install"
