@@ -9,7 +9,7 @@ runs:
   steps:
     - name: Checkout main
       id: checkout_release
-      uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
 
     - name: Build template
       id: build_template
