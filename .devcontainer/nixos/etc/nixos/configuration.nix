@@ -46,7 +46,9 @@ in {
   services = {
     nscd.enable = false;
     openssh.enable = true;
+    dbus.enable = true;
   };
+  security.polkit.enable = true;
 
   # systemd settings. you can enable/disable services.
   # systemd.services.nginx.serviceConfig.AmbientCapabilities =
