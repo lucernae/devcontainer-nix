@@ -1,9 +1,19 @@
-{ system ? builtins.currentSystem, pkgs ? import <nixpkgs> { inherit system; }
+{
+  system ? builtins.currentSystem,
+  pkgs ? import <nixpkgs> { inherit system; },
 }:
 let
-  container =
-    (import ./container-definition.nix { inherit system pkgs; }).container;
-in with pkgs; {
+  container = (import ./container-definition.nix { inherit system pkgs; }).container;
+
+  # Create a derivation that places config files in the correct location
+  nixosConfigFiles = pkgs.runCommand "nixos-config-files" { } ''
+    mkdir -p $out/etc/nixos
+    cp ${./configuration.nix} $out/etc/nixos/configuration.nix
+    cp ${./devcontainer-patch.nix} $out/etc/nixos/devcontainer-patch.nix
+  '';
+in
+with pkgs;
+{
   # this is the output if you want to create a docker image and load it using:
   # ./result | docker load
   layeredImage = dockerTools.streamLayeredImage {
@@ -12,15 +22,10 @@ in with pkgs; {
     # you can include more packages into the paths and nix store inside the image
     contents = [
       #   pkgs.vim
-      {
-        source = ./configuration.nix;
-        target = "etc/nixos/configuration.nix";
-      }
-      {
-        source = ./devcontainer-patch.nix;
-        target = "etc/nixos/devcontainer-patch.nix";
-      }
+      nixosConfigFiles
     ];
-    config = { Cmd = [ "${container}/init" ]; };
+    config = {
+      Cmd = [ "${container}/init" ];
+    };
   };
 }
