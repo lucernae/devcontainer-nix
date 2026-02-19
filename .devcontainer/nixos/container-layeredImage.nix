@@ -12,6 +12,19 @@ let
     cp ${./etc/nixos/configuration.nix} $out/etc/nixos/configuration.nix
     cp ${./etc/nixos/devcontainer-patch.nix} $out/etc/nixos/devcontainer-patch.nix
   '';
+
+  # Create FHS symlinks needed for Docker/VS Code compatibility
+  fhsSymlinks = pkgs.runCommand "fhs-symlinks" { } ''
+    mkdir -p $out/bin $out/usr/bin $out/usr/sbin
+    # Essential shells for VS Code and Docker
+    ln -s ${pkgs.bash}/bin/bash $out/bin/bash
+    ln -s ${pkgs.bash}/bin/bash $out/bin/sh
+    ln -s ${pkgs.bash}/bin/bash $out/usr/bin/bash
+    ln -s ${pkgs.bash}/bin/bash $out/usr/bin/sh
+    # Core utilities often expected in /bin
+    ln -s ${pkgs.coreutils}/bin/env $out/usr/bin/env
+    ln -s ${pkgs.coreutils}/bin/env $out/bin/env
+  '';
 in
 with pkgs;
 {
@@ -24,6 +37,7 @@ with pkgs;
     contents = [
       #   pkgs.vim
       nixosConfigFiles
+      fhsSymlinks
     ];
     config = {
       Cmd = [ "${container}/init" ];
