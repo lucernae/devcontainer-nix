@@ -4,7 +4,7 @@ in {
   boot = {
     # settings to enable booting as OCI containers
     isContainer = true;
-    tmp.useTmpfs = true;
+    tmp.useTmpfs = false;
   };
   # boot.tmpOnTmpfs = true;
   networking = {
@@ -31,6 +31,8 @@ in {
     zsh
     git
     nodejs
+    curl
+    wget
     acl
     docker  # docker-client was removed in nixpkgs 25.11; use docker (includes CLI)
     devcontainer-patch

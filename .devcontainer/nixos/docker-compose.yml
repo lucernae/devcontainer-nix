@@ -17,11 +17,11 @@ services:
     # array). The sample below assumes your primary file is in the root of your project.
     #
     # uncomment the build section when you want to rebuild
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   args:
-    #     - NIXOS_VERSION=${NIXOS_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NIXOS_VERSION=nixos-25.11
     image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---latest
     privileged: true
     tty: true
@@ -34,9 +34,13 @@ services:
       # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
       - /var/run/docker.sock:/var/run/docker.sock
 
+      # Mask tmp.mount so systemd doesn't mount /tmp as tmpfs
+      # (required for docker cp to work — e.g. for antigravity devcontainer server install)
+      - ./etc/systemd/system/tmp.mount:/etc/systemd/system/tmp.mount
+
       # Systemd related mount
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    
+
     tmpfs:
       - /cont/tmp:exec,mode=777
       - /run
@@ -49,10 +53,13 @@ services:
       PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
       TMPDIR: "/cont/tmp"
       VSCODE_SERVER_CUSTOM_GLIBC_LINKER: "true"
-      
+
     cap_add:
-        - SYS_ADMIN
-        - CAP_NET_ADMIN
+      - SYS_ADMIN
+      - CAP_NET_ADMIN
+
+    # Required for systemd to create /init.scope on cgroupv2 hosts with nsdelegate
+    cgroup: host
 
     stop_signal: SIGRTMIN+3
     # systemd uses init binary as PID 1, so we should not override the entrypoint or cmd

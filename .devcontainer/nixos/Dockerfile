@@ -1,4 +1,4 @@
-ARG NIXOS_VERSION=nixos-25.05
+ARG NIXOS_VERSION=nixos-25.11
 # any docker image with nix will do. 
 # we basically want to use the nix tools then throw it away
 FROM ghcr.io/lucernae/nix-community/nixpkgs/devcontainer:${NIXOS_VERSION} AS build
@@ -17,7 +17,7 @@ RUN nix-build container-tarball.nix
 RUN mkdir -p ./extracted \
     && export NIX_ARCH=$(nix eval --impure --raw --expr 'builtins.currentSystem') \
     && tar -xf result/tarball/nixos-system-${NIX_ARCH}.tar -C extracted
-    
+
 # we have no way of passing link location to the next stage, so we pass 
 # it as files
 RUN echo "$(readlink ./extracted/rootfs)" > current-system-closure-path.txt
@@ -46,6 +46,8 @@ COPY --from=build /usr/share/nixos-build/current-system-closure-path.txt /path.t
 COPY --from=linux-lib /lib /lib
 COPY --from=linux-lib /lib32 /lib32
 COPY --from=linux-lib /lib64 /lib64
+COPY --from=linux-lib /usr/bin/wget /usr/bin/wget
+COPY --from=linux-lib /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 
 # creating symlink for systemd init at container boot
 RUN $(cat /path.txt)/activate || true \
@@ -53,5 +55,5 @@ RUN $(cat /path.txt)/activate || true \
 # The last step is the clean up
 
 # initial path
-ENV PATH=/bin:/usr/sbin
+ENV PATH=/bin:/usr/sbin:/usr/bin
 CMD [ "/usr/sbin/init" ]

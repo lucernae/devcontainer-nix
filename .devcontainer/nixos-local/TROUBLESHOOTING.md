@@ -138,7 +138,47 @@ This runs AFTER container is created and systemd is already running.
 
 ## Solutions
 
-### Solution 1: Wait for systemd before VS Code connects
+### Solution 1: Add placeholder /etc/passwd in image (Permanent Fix)
+
+The VS Code probe runs BEFORE any devcontainer commands (even `onCreateCommand`). There is no built-in way to delay the probe.
+
+**Therefore, the solution is to add placeholder /etc/passwd and /etc/group to the image at build time.**
+
+Add passwd/group files in the NixOS image build (in container-layeredImage.nix):
+
+```nix
+fhsEtc = pkgs.runCommand "fhs-etc" { } ''
+  mkdir -p $out/etc
+  echo "root:x:0:0:root:/root:/run/current-system/sw/bin/zsh" > $out/etc/passwd
+  echo "root:x:0:" > $out/etc/group
+  echo "vscode:x:1000:" >> $out/etc/group
+'';
+```
+
+Include in `contents` array of streamLayeredImage.
+
+### Solution 2: Start container first, then use devcontainer CLI (Workaround)
+
+This is a practical workaround - start the container first, then use devcontainer CLI:
+
+```bash
+# 1. Start container with docker-compose
+docker compose up -d
+
+# 2. Wait for systemd to boot
+sleep 10
+
+# 3. Now run devcontainer CLI - it will attach to running container
+devcontainer up --workspace-folder . --config .devcontainer/nixos-local/devcontainer.json
+```
+
+This works because:
+1. docker-compose starts the container and waits for systemd to boot
+2. When systemd is ready, /etc/passwd and /etc/group exist
+3. devcontainer CLI then connects to the already-running container
+4. VS Code probe succeeds because FHS files exist
+
+### Solution 3: Use entrypoint wrapper (Alternative)
 
 Use a custom entrypoint that waits for systemd (Rule 4):
 
