@@ -55,8 +55,8 @@ in {
   # These units are not meaningful inside a container
   systemd.services.systemd-udevd.enable = false;
   systemd.services.systemd-udev-settle.enable = false;
-  # Use cgroupv2 unified hierarchy for better container compatibility
-  systemd.enableUnifiedCgroupHierarchy = true;
+  # Note: systemd.enableUnifiedCgroupHierarchy was removed in NixOS 25.05+;
+  # cgroupv2 unified hierarchy is now the only supported mode in systemd 256+.
 
   # needed by vscode for non-root containers
   users.mutableUsers = true;
