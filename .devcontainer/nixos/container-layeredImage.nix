@@ -25,6 +25,19 @@ let
     ln -s ${pkgs.coreutils}/bin/env $out/usr/bin/env
     ln -s ${pkgs.coreutils}/bin/env $out/bin/env
   '';
+
+  # Create passwd and group files for VS Code Dev Containers compatibility
+  # These are needed for VS Code to connect (runs `uname -m` probe as root)
+  # The NixOS activation will regenerate these at runtime, but these serve as placeholders
+  fhsEtc = pkgs.runCommand "fhs-etc" { } ''
+    mkdir -p $out/etc
+    # passwd: root user (UID 0, GID 0)
+    echo "root:x:0:0:root:/root:/run/current-system/sw/bin/zsh" > $out/etc/passwd
+    # group: root group (GID 0)
+    echo "root:x:0:" > $out/etc/group
+    # vscode group (GID 1000) - matches configuration.nix
+    echo "vscode:x:1000:" >> $out/etc/group
+  '';
 in
 with pkgs;
 {
@@ -38,6 +51,7 @@ with pkgs;
       #   pkgs.vim
       nixosConfigFiles
       fhsSymlinks
+      fhsEtc
     ];
     config = {
       Cmd = [ "${container}/init" ];
