@@ -33,7 +33,7 @@ in {
     git
     nodejs
     acl
-    docker-client
+    docker  # docker-client was removed in nixpkgs 25.11; use docker (includes CLI)
     devcontainer-patch
   ];
   nix = {
