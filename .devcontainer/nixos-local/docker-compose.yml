@@ -6,6 +6,10 @@ services:
     privileged: true
     tty: true
     
+    # Workaround: Create FHS symlinks before starting systemd
+    # This allows VS Code to connect to the container (needs /bin/sh)
+    entrypoint: ["/workspace/.devcontainer/nixos-local/init-workaround.sh"]
+    
     volumes:
       # Mount the workspace
       - ../../:/workspace:cached
