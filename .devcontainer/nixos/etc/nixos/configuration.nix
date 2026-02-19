@@ -14,14 +14,13 @@ in {
     firewall.enable = false;
     # for some reason, dhcpcd doesn't work nicely
     useNetworkd = false;
-    useHostResolvConf = false;
+    # useHostResolvConf removed in NixOS 25.11 ("was never used for anything")
     dhcpcd.enable = lib.mkOverride 0 false;
     # fallback dns
     nameservers = [ "1.1.1.1" "8.8.8.8" ];
   };
   # networking.firewall.enable = false;
   # networking.useNetworkd = false;
-  # networking.useHostResolvConf = true;
   # networking.dhcpcd.enable = true;
   # an example of defining systemd services
   # services.nginx.enable = true;
