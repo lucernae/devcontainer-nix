@@ -17,6 +17,7 @@ on:
     branches:
       - develop
       - main
+      - claude/**
 jobs:
   nix-build:
     runs-on: ubuntu-latest
