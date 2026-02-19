@@ -29,8 +29,9 @@
 	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
 	// "shutdownAction": "none",
 
-	// Uncomment the next line to run commands after the container is created - for example installing curl.
-	"postCreateCommand": "bash -c \"(/usr/sbin/init --system || true) && systemctl start nix-daemon && systemctl start dbus && nix-channel --update\"",
+	// Wait for systemd (PID 1) to finish booting, then run first-boot setup.
+	// Do NOT call /usr/sbin/init here — systemd is already PID 1 via overrideCommand:false.
+	"postCreateCommand": "bash -c \"systemctl is-system-running --wait || true && nix-channel --update\"",
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "root"

@@ -52,6 +52,11 @@ in {
   #   lib.mkForce [ "CAP_NET_BIND_SERVICE" ];
   systemd.services.nix-daemon.enable = true;
   systemd.services.networkd-wait-online.enable = false;
+  # These units are not meaningful inside a container
+  systemd.services.systemd-udevd.enable = false;
+  systemd.services.systemd-udev-settle.enable = false;
+  # Use cgroupv2 unified hierarchy for better container compatibility
+  systemd.enableUnifiedCgroupHierarchy = true;
 
   # needed by vscode for non-root containers
   users.mutableUsers = true;
@@ -116,5 +121,5 @@ in {
   '';
 
   system.nssModules = lib.mkForce [ ];
-  system.stateVersion = "22.05";
+  system.stateVersion = "25.11";
 }
