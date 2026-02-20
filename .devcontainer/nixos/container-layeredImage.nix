@@ -7,10 +7,14 @@ let
 
   # Pull the Microsoft devcontainers base image to extract Debian libraries
   # This replicates lines 26-30 of the Dockerfile
+  # Multi-arch support: uses different hash per architecture
   microsoftBaseImage = pkgs.dockerTools.pullImage {
     imageName = "mcr.microsoft.com/devcontainers/base";
     imageDigest = "sha256:3dcb059253b2ebb44de3936620e1cff3dadcd2c1c982d579081ca8128c1eb319";
-    sha256 = "0cd394cmx3hxqf4m7rzvfb0fijpyihrk9n0hgypyisvj264sbshc";
+    sha256 =
+      if system == "x86_64-linux" then "sha256-DOqliRFy6+ivfxDYNDOM/srowHL751OJwx2OXhlJozE="
+      else if system == "aarch64-linux" then "sha256-EavwpObLdBjgGpxY7as6Qtlt4WvEvzl96BtozRXJ8G4="
+      else throw "Unsupported system: ${system}";
     finalImageTag = "ubuntu";
   };
 
