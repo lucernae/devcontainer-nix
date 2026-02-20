@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     flake-utils.url = "github:numtide/flake-utils";
     # customized from github:nix-community/docker-nixpkgs to support flake
     docker-nixpkgs.url = "github:lucernae/docker-nixpkgs/flake-devcontainer";
@@ -12,12 +12,12 @@
         formatter = pkgs.nixfmt;
         packages = {
           base-devcontainer = {
-            "nixos-25.05" =
-              docker-nixpkgs.docker-nixpkgs.${system}."nixos-25.05".devcontainer;
+            "nixos-25.11" =
+              docker-nixpkgs.docker-nixpkgs.${system}."nixos-25.11".devcontainer;
             "nixos-unstable" =
               docker-nixpkgs.docker-nixpkgs.${system}."nixos-unstable".devcontainer;
             default =
-              docker-nixpkgs.docker-nixpkgs.${system}."nixos-25.05".devcontainer;
+              docker-nixpkgs.docker-nixpkgs.${system}."nixos-25.11".devcontainer;
           };
           devcontainer-root = (import ./root/default.nix) { inherit pkgs; };
           devcontainer-packages = (import ./packages.nix) { inherit pkgs; };
