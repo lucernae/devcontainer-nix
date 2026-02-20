@@ -4,40 +4,43 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgsUnstable, home-manager }:
-    {
-      # Home Manager configurations for the vscode user
-      homeConfigurations = {
-        # Configuration for x86_64 systems (Intel/AMD)
-        vscode = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            ./home.nix
-            {
-              # Ensure home directory and username match the container
-              home.username = "vscode";
-              home.homeDirectory = "/home/vscode";
-            }
-          ];
+  outputs = { self, nixpkgs, nixpkgsUnstable, flake-utils, home-manager }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        # Shared Home Manager configuration module
+        mkHomeModule = username: homeDirectory: { pkgs, ... }: {
+          imports = [ ./home.nix ];
+          home.username = username;
+          home.homeDirectory = homeDirectory;
+        };
+      in
+      {
+        # Home configurations for both vscode and root users
+        packages.homeConfigurations = {
+          vscode = home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages.${system};
+            modules = [ (mkHomeModule "vscode" "/home/vscode") ];
+          };
+
+          root = home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages.${system};
+            modules = [ (mkHomeModule "root" "/root") ];
+          };
         };
 
-        # Configuration for ARM64 systems (Apple Silicon, ARM servers)
-        vscode-aarch64 = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.aarch64-linux;
-          modules = [
-            ./home.nix
-            {
-              home.username = "vscode";
-              home.homeDirectory = "/home/vscode";
-            }
+        # Development shell for working with the flake
+        devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
+          packages = with nixpkgs.legacyPackages.${system}; [
+            home-manager.packages.${system}.home-manager
           ];
         };
-      };
-    };
+      }
+    );
 }

@@ -20,7 +20,9 @@
 
 	// Switch to vscode user for development
 	"remoteUser": "vscode",
-
+	"remoteEnv": {
+		USER: "vscode"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [

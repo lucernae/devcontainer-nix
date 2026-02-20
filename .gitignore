@@ -1,6 +1,7 @@
 .vscode
 .local.envrc
 .local.env
+.env
 .idea
 .direnv
 .local.envrc
@@ -10,3 +11,4 @@ docker-compose.override.yml
 result
 result-*
 tmp
+.claude

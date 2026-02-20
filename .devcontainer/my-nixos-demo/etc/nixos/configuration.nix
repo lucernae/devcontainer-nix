@@ -93,6 +93,7 @@ in {
   }];
 
   programs.nix-ld.enable = true;
+  programs.zsh.enable = true;
 
   system.activationScripts.installInitScript = ''
     mkdir -p /usr/sbin

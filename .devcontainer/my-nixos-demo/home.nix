@@ -11,8 +11,6 @@
   # User packages - AI Agentic Tools and Development Utilities
   home.packages = with pkgs; [
     # AI Development Tools
-    nodejs
-    nodePackages.npm
     opencode
     claude-code
 
@@ -47,9 +45,11 @@
   # Git configuration for AI-assisted development
   programs.git = {
     enable = true;
-    userName = "AI Developer";
-    userEmail = "dev@example.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "AI Developer";
+        email = "dev@example.com";
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
       core.editor = "code --wait";
@@ -64,7 +64,12 @@
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";
     };
-    delta.enable = true;
+  };
+
+  # Delta (git diff viewer) - separate from git config
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
   };
 
   # Zsh configuration optimized for AI development
@@ -96,12 +101,16 @@
       nix-search = "nix search nixpkgs";
       nix-shell-unfree = "NIXPKGS_ALLOW_UNFREE=1 nix-shell";
 
-      # NixOS rebuild with unfree packages allowed
-      # Applies configuration from /etc/nixos/configuration.nix
-      nrsf = "sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --impure -I nixos-config=/etc/nixos/configuration.nix";
+      # NixOS rebuild shortcuts:
+      # nrs  - Traditional rebuild (uses /etc/nixos/configuration.nix)
+      # nrsf - Flake-based rebuild (uses /etc/nixos/flake.nix#devcontainer)
 
-      # Short version (uses /etc/nixos/configuration.nix by default)
-      nrs = "sudo nixos-rebuild switch";
+      # Traditional NixOS rebuild with unfree packages
+      nrs = "sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --impure -I nixos-config=/etc/nixos/configuration.nix";
+
+      # Flake-based NixOS rebuild (recommended)
+      # Flake automatically detects system architecture
+      nrsf = "sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --flake /etc/nixos#devcontainer --impure";
     };
 
     oh-my-zsh = {

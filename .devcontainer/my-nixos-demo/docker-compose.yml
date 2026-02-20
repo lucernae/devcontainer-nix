@@ -11,8 +11,16 @@ services:
       # Mount workspace
       - ../../:/workspace:cached
 
-      # Mount NixOS configuration
+      # Persist Nix store across container rebuilds
+      # Local: uses named volume 'nix-store'
+      # Codespaces: set NIX_STORE_SOURCE to bind mount path for persistence
+      - ${NIX_STORE_SOURCE:-nix-store}:/nix
+
+      # Mount NixOS configuration (traditional)
       - ./etc/nixos/configuration.nix:/etc/nixos/configuration.nix
+
+      # Mount NixOS flake configuration (flake-based)
+      - ./etc/nixos/flake.nix:/etc/nixos/flake.nix
 
       # Mount home-manager configuration for the vscode user
       - ./home.nix:/home/vscode/home.nix
@@ -43,6 +51,7 @@ services:
       NIXPKGS_ALLOW_UNFREE: "1"
       # Placeholder for Claude Code API key (set this in your environment)
       # ANTHROPIC_API_KEY: "your-api-key-here"
+      USER: "vscode" # must be consistent with remoteUser in devcontainer.json
 
     cap_add:
       - SYS_ADMIN
@@ -52,3 +61,7 @@ services:
     cgroup: host
 
     stop_signal: SIGRTMIN+3
+
+volumes:
+  nix-store:
+    driver: local

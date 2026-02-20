@@ -174,22 +174,42 @@ The editor is configured to use `zsh` as the integrated terminal shell.
 
 ### Modifying System Configuration
 
-Edit `.devcontainer/my-nixos-demo/etc/nixos/configuration.nix`:
+#### Method 1: Flake-Based (Recommended)
 
-```nix
-environment.systemPackages = with pkgs; [
-  # Add your system-level packages here
-  postgresql
-  redis
-];
-```
+The system uses `/etc/nixos/flake.nix` which imports `configuration.nix`:
 
-Then rebuild:
+1. Edit `.devcontainer/my-nixos-demo/etc/nixos/configuration.nix`:
+   ```nix
+   environment.systemPackages = with pkgs; [
+     # Add your system-level packages here
+     postgresql
+     redis
+   ];
+   ```
+
+2. Apply changes from inside the container:
+   ```bash
+   # Inside container as vscode user
+   nrsf
+
+   # Or with full command
+   sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --flake /etc/nixos#devcontainer --impure
+   ```
+
+3. Changes applied immediately (no container rebuild needed)!
+
+#### Method 2: Traditional
+
+Same as above, but use `nrsf` instead of `nrsf-flake`:
 ```bash
-nix build .#layeredImage --rebuild
-docker load < result
-docker-compose down && docker-compose up -d
+nrsf  # Uses configuration.nix directly
 ```
+
+**Note:** The flake-based approach is preferred as it:
+- Pins dependencies via `flake.lock`
+- Supports multi-architecture
+- Allows access to unstable packages
+- Is automatically used by post-create.sh
 
 ### Modifying User Environment
 
@@ -248,8 +268,8 @@ The Zsh shell is pre-configured with:
 - `gl` → `git log --oneline --graph --decorate`
 
 **Nix/NixOS:**
-- `nrsf` → `sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --impure -I nixos-config=/etc/nixos/configuration.nix`
-- `nrs` → `sudo nixos-rebuild switch` (simpler version)
+- `nrsf` → `sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --flake /etc/nixos#devcontainer --impure` (flake-based, recommended)
+- `nrs` → `sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --impure -I nixos-config=/etc/nixos/configuration.nix` (traditional)
 - `nix-shell-unfree` → `NIXPKGS_ALLOW_UNFREE=1 nix-shell`
 - `gs` → `git status`
 - `ga` → `git add`
@@ -405,17 +425,48 @@ nix flake lock --update-input home-manager
 
 ### System Configuration (NixOS)
 
-The system configuration is managed via traditional `/etc/nixos/configuration.nix`:
+The system can be configured using either **flake-based** (recommended) or **traditional** approaches:
+
+#### Flake-Based (Recommended)
+
+```bash
+# Apply system configuration changes using the flake
+sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --flake /etc/nixos#devcontainer --impure
+
+# Or use the convenient alias (inside container as vscode user)
+nrsf
+
+# Edit the flake configuration
+sudo vi /etc/nixos/flake.nix
+```
+
+**Benefits:**
+- ✅ Reproducible (flake.lock pins dependencies)
+- ✅ Multi-architecture support (devcontainer vs devcontainer-aarch64)
+- ✅ Can use unstable packages via overlay
+- ✅ Imports traditional configuration.nix
+
+#### Traditional (Fallback)
 
 ```bash
 # Apply system configuration changes
 sudo NIXPKGS_ALLOW_UNFREE=1 nixos-rebuild switch --impure
 
 # Or use the convenient alias (inside container as vscode user)
-nrsf
+nrs
 
+# Edit the traditional configuration
+sudo vi /etc/nixos/configuration.nix
+```
+
+#### Check System Configuration
+
+```bash
 # Check system configuration
 sudo nixos-option environment.systemPackages
+
+# Show current generation
+sudo nix-env --list-generations --profile /nix/var/nix/profiles/system
 ```
 
 ## 🌟 Highlights
