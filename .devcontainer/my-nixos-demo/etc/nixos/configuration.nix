@@ -1,0 +1,131 @@
+{ config, lib, options, pkgs, ... }:
+let devcontainer-patch = import ./devcontainer-patch.nix { inherit pkgs; };
+in {
+  boot = {
+    # settings to enable booting as OCI containers
+    isContainer = true;
+    tmp.useTmpfs = false;
+  };
+
+  networking = {
+    # machine hostname
+    hostName = lib.mkForce "devcontainer";
+    # networking settings for containers
+    firewall.enable = false;
+    # for some reason, dhcpcd doesn't work nicely
+    useNetworkd = false;
+    dhcpcd.enable = lib.mkOverride 0 false;
+    # fallback dns
+    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  };
+
+  # Allow unfree packages system-wide
+  # This is required for VS Code and other proprietary software
+  nixpkgs.config.allowUnfree = true;
+
+  environment.systemPackages = with pkgs; [
+    vim
+    zsh
+    git
+    nodejs
+    curl
+    wget
+    acl
+    nixd
+    docker  # docker-client was removed in nixpkgs 25.11; use docker (includes CLI)
+    home-manager
+    devcontainer-patch
+
+    # AI/Development tools available system-wide
+    # These will also be available in home-manager
+    ripgrep
+    fd
+    jq
+  ];
+
+  nix = {
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      extra-platforms = [ "x86_64-linux" "aarch64-linux" ];
+    };
+  };
+
+  services = {
+    nscd.enable = false;
+    openssh.enable = true;
+    dbus.enable = true;
+  };
+
+  security.polkit.enable = true;
+
+  # systemd settings
+  systemd.services.nix-daemon.enable = true;
+  systemd.services.networkd-wait-online.enable = false;
+  # These units are not meaningful inside a container
+  systemd.services.systemd-udevd.enable = false;
+  systemd.services.systemd-udev-settle.enable = false;
+
+  # needed by vscode for non-root containers
+  users.mutableUsers = true;
+  users.groups = {
+    vscode = {
+      gid = 1000;
+      name = "vscode";
+    };
+  };
+  users.users.vscode = {
+    uid = 1000;
+    isNormalUser = true;
+    name = "vscode";
+    home = "/home/vscode";
+    group = "vscode";
+    extraGroups = [ "wheel" "docker" ];
+    shell = pkgs.zsh;
+  };
+
+  security.sudo.extraRules = [{
+    runAs = "root";
+    groups = [ "wheel" ];
+    commands = [{
+      command = "ALL";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
+
+  programs.nix-ld.enable = true;
+
+  system.activationScripts.installInitScript = ''
+    mkdir -p /usr/sbin
+    if [ ! -f /usr/sbin/init ]; then
+      ln -fs $systemConfig/init /usr/sbin/init
+    fi
+  '';
+
+  system.activationScripts.vscodePatch = ''
+    mkdir -p /bin
+    for f in $systemConfig/sw/bin/*; do
+      ln -sf "$(readlink $f)" "/bin/$(basename $f)"
+    done
+    if [ ! -d /lib ]; then
+      ln -fs $systemConfig/sw/lib /lib
+    fi
+    if [ ! -d /lib64 ]; then
+      ln -fs /lib /lib64
+    fi
+    for f in libgcc_s.so.1 libdl.so.2; do
+      ln -fs $systemConfig/sw/lib/$f /lib/$f
+    done
+  '';
+
+  system.activationScripts.ghCodespacePatch = ''
+    # GitHub codespace needs node in /usr/bin
+    if [ ! -f /usr/bin/node ]; then
+      ln -fs $systemConfig/sw/bin/node /usr/bin/node
+    fi
+    # allow nix to build using /tmp in codespace
+    $systemConfig/sw/bin/setfacl -k /tmp
+  '';
+
+  system.nssModules = lib.mkForce [ ];
+  system.stateVersion = "25.11";
+}

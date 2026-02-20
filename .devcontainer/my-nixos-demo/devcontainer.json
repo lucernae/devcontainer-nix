@@ -1,0 +1,50 @@
+{
+	"name": "AI Agentic NixOS Demo (VS Code + Claude Code)",
+
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+
+	"overrideCommand": false,
+
+	"service": "devcontainer",
+
+	"workspaceFolder": "/workspace",
+
+	// Wait for systemd (PID 1) to finish booting, then run first-boot setup
+	// including home-manager activation with AI tools
+	"postCreateCommand": "bash .devcontainer/my-nixos-demo/opt/devcontainer/scripts/post-create.sh",
+
+	// For NixOS devcontainer, systemd needs to run as root PID 1
+	"containerUser": "root",
+
+	// Switch to vscode user for development
+	"remoteUser": "vscode",
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				// Nix support
+				"arrterian.nix-env-selector",
+				"bbenoist.Nix",
+				"jnoortheen.nix-ide",
+				"brettm12345.nixfmt-vscode",
+
+				// Docker support
+				"ms-azuretools.vscode-docker",
+
+				// Git support
+				"eamodio.gitlens",
+
+				// AI assistance
+				"github.copilot",
+				"github.copilot-chat"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"nix.enableLanguageServer": true,
+				"nix.serverPath": "nixd"
+			}
+		}
+	}
+}
