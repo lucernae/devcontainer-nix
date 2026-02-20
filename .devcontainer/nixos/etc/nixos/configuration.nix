@@ -4,7 +4,7 @@ in {
   boot = {
     # settings to enable booting as OCI containers
     isContainer = true;
-    tmp.useTmpfs = true;
+    tmp.useTmpfs = false;
   };
   # boot.tmpOnTmpfs = true;
   networking = {
@@ -14,14 +14,13 @@ in {
     firewall.enable = false;
     # for some reason, dhcpcd doesn't work nicely
     useNetworkd = false;
-    useHostResolvConf = false;
+    # useHostResolvConf removed in NixOS 25.11 ("was never used for anything")
     dhcpcd.enable = lib.mkOverride 0 false;
     # fallback dns
     nameservers = [ "1.1.1.1" "8.8.8.8" ];
   };
   # networking.firewall.enable = false;
   # networking.useNetworkd = false;
-  # networking.useHostResolvConf = true;
   # networking.dhcpcd.enable = true;
   # an example of defining systemd services
   # services.nginx.enable = true;
@@ -32,8 +31,12 @@ in {
     zsh
     git
     nodejs
+    curl
+    wget
     acl
-    docker-client
+    nixd
+    docker  # docker-client was removed in nixpkgs 25.11; use docker (includes CLI)
+    home-manager
     devcontainer-patch
   ];
   nix = {
@@ -45,13 +48,20 @@ in {
   services = {
     nscd.enable = false;
     openssh.enable = true;
+    dbus.enable = true;
   };
+  security.polkit.enable = true;
 
   # systemd settings. you can enable/disable services.
   # systemd.services.nginx.serviceConfig.AmbientCapabilities =
   #   lib.mkForce [ "CAP_NET_BIND_SERVICE" ];
   systemd.services.nix-daemon.enable = true;
   systemd.services.networkd-wait-online.enable = false;
+  # These units are not meaningful inside a container
+  systemd.services.systemd-udevd.enable = false;
+  systemd.services.systemd-udev-settle.enable = false;
+  # Note: systemd.enableUnifiedCgroupHierarchy was removed in NixOS 25.05+;
+  # cgroupv2 unified hierarchy is now the only supported mode in systemd 256+.
 
   # needed by vscode for non-root containers
   users.mutableUsers = true;
@@ -116,5 +126,5 @@ in {
   '';
 
   system.nssModules = lib.mkForce [ ];
-  system.stateVersion = "22.05";
+  system.stateVersion = "25.11";
 }

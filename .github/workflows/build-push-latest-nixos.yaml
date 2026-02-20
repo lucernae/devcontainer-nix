@@ -18,135 +18,118 @@ on:
       - develop
       - main
 jobs:
-  docker-build:
-    runs-on: ubuntu-latest
+  nix-build:
+    # Note: NixOS builds require KVM for runAsRoot in dockerTools.buildImage
+    # aarch64-linux: self-hosted runner with KVM support
+    # x86_64-linux: GitHub-hosted runner
+    runs-on: ${{ matrix.nix_system == 'aarch64-linux' && fromJSON('["self-hosted", "Linux", "ARM64"]') || 'ubuntu-24.04' }}
     strategy:
       fail-fast: false
       matrix:
+        nix_system:
+          - "x86_64-linux"
+          - "aarch64-linux"
         nix_channel:
+          - nixos_channel: "nixos-25.11"
+            home_manager_version_string: "release-25.11"
+            default_tag: true
           - nixos_channel: "nixos-unstable"
             home_manager_version_string: "master"
-            main_nix_channel: "https://nixos.org/channels/nixos-unstable"
-            home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
             default_tag: false
-          - nixos_channel: "nixos-25.05"
-            home_manager_version_string: "release-25.05"
-            main_nix_channel: "https://nixos.org/channels/nixos-25.05"
-            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz"
-            default_tag: true
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+
+      - name: Set up PATH for NixOS (self-hosted)
+        if: matrix.nix_system == 'aarch64-linux'
+        run: echo "/run/current-system/sw/bin" >> $GITHUB_PATH
+
       - name: Set up QEMU
+        if: matrix.nix_system != 'aarch64-linux'
         uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
+        if: matrix.nix_system != 'aarch64-linux'
+        with:
+          nix_path: nixpkgs=channel:${{ matrix.nix_channel.nixos_channel }}
+          extra_nix_config: |
+            filter-syscalls = false
+            experimental-features = nix-command flakes
+            extra-platforms = aarch64-linux
+
+      - uses: DeterminateSystems/flakehub-cache-action@main
+
       - name: Login to Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Docker meta
-        id: docker_meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/lucernae/devcontainer-nix
-          flavor: |
-            latest=false
-            prefix=nixos-dockertools--${{matrix.nix_channel.nixos_channel}}---
-          tags: |
-            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
-            type=raw,value=stable${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
-            type=raw,value=latest${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
-            type=ref,event=branch
-            type=ref,event=pr
-            type=ref,event=tag
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}
-            type=semver,pattern=v{{major}}.{{minor}}
-            type=semver,pattern=v{{major}}.{{minor}}.{{patch}}
-            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{version}}
-            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}
-            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}.{{minor}}
-            type=semver${{ matrix.nix_channel.default_tag && ',prefix=nixos-dockertools---' || '' }},pattern=v{{major}}.{{minor}}.{{patch}}
-      - name: Build image
-        id: docker_build
-        uses: docker/build-push-action@v6
-        with:
-          context: .devcontainer/nixos
-          push: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url }}
-          build-args: |
-            NIXOS_VERSION=${{matrix.nix_channel.nixos_channel}}
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
-          cache-from: |
-            type=gha,scope=test
-            type=gha,scope=prod
-          cache-to: type=gha,scope=prod
 
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+      - name: Update flake inputs to ${{ matrix.nix_channel.nixos_channel }}
+        working-directory: .devcontainer/nixos
+        run: nix flake update
 
-# Commented out. possibly useful in the future
-#  smoke-test:
-#    runs-on: ubuntu-latest
-#    needs:
-#      - docker-build
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        docker_platform:
-#          - linux/amd64
-#          - linux/arm64
-#        nix_channel:
-#          - nixos_channel: "nixos-unstable"
-#            home_manager_version_string: "master"
-#            main_nix_channel: "https://nixos.org/channels/nixos-unstable"
-#            home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
-#          - nixos_channel: "nixos-25.05"
-#            home_manager_version_string: "release-25.05"
-#            main_nix_channel: "https://nixos.org/channels/nixos-25.05"
-#            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz"
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v2
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v2
-#      - uses: cachix/install-nix-action@v22
-#        with:
-#          nix_path: nixpkgs=channel:${{matrix.nix_channel.nixos_channel}}
-#          extra_nix_config: |
-#            filter-syscalls = false
-#            experimental-features = nix-command flakes
-#            extra-platforms = aarch64-linux
-#      - uses: DeterminateSystems/flakehub-cache-action@main
-#
-#      - name: Run docker-compose services
-#        working-directory: .devcontainer/nixos
-#        env:
-#          DOCKER_PLATFORM: "${{matrix.docker_platform}}"
-#          DEVCONTAINER_IMAGE_TAG: "${{needs.docker-build.outputs.docker_output_tags}}"
-#        run: |
-#          docker-compose up -d
-#          sleep 5
-#          docker-compose exec -T devcontainer uname -a
-#
-#      - name: Run Smoke test
-#        working-directory: .devcontainer/nixos
-#        env:
-#          DOCKER_PLATFORM: "${{matrix.docker_platform}}"
-#          DEVCONTAINER_IMAGE_TAG: "${{needs.docker-build.outputs.docker_output_tags}}"
-#        run: |
-#          cat << EOF | docker-compose exec -T devcontainer bash
-#          node --version
-#          nix-env --version
-#          nix --version
-#          nix-channel --list
-#          systemctl start nix-daemon
-#          systemctl start dbus
-#          nix-channel --update
-#          uname -a
-#          EOF
+      - name: Nix build NixOS devcontainer image (${{ matrix.nix_system }})
+        working-directory: .devcontainer/nixos
+        run: |
+          nix build '.#packages.${{ matrix.nix_system }}.layeredImage'
+
+      - name: Load image into Docker and push (${{ matrix.nix_system }})
+        if: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url || github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        working-directory: .devcontainer/nixos
+        run: |
+          export loaded_tag=$(cat ./result | docker load | awk '/Loaded image/{print $NF}')
+          echo "Loaded image: $loaded_tag"
+
+          TARGET_TAG="ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}---${{ matrix.nix_system }}"
+          docker tag "$loaded_tag" "$TARGET_TAG"
+          docker push "$TARGET_TAG"
+
+          # Also push a channel-level tag on main/develop (no arch suffix)
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/develop" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            BRANCH_LABEL=$( [[ "${{ github.ref }}" == "refs/heads/main" ]] && echo "stable" || echo "latest" )
+            CHANNEL_TAG="ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}---${BRANCH_LABEL}---${{ matrix.nix_system }}"
+            docker tag "$loaded_tag" "$CHANNEL_TAG"
+            docker push "$CHANNEL_TAG"
+          fi
+
+      - name: Print image digest
+        working-directory: .devcontainer/nixos
+        run: |
+          docker inspect ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}---${{ matrix.nix_system }} \
+            --format '{{.Id}}' 2>/dev/null || echo "Image not loaded locally"
+
+  manifests-create:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        nix_channel:
+          - nixos_channel: "nixos-25.11"
+            default_tag: true
+          - nixos_channel: "nixos-unstable"
+            default_tag: false
+    needs:
+      - nix-build
+    steps:
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+
+      - name: Login to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create multi-arch manifest
+        run: |
+          docker manifest create \
+            ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }} \
+            --amend ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}---x86_64-linux \
+            --amend ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}---aarch64-linux
+          docker manifest push \
+            ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}

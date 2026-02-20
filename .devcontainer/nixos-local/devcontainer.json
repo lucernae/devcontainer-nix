@@ -1,0 +1,29 @@
+// NixOS Devcontainer - Local Test Configuration
+// Uses pre-built image from GHCR
+{
+	"name": "NixOS Devcontainer (Local Test)",
+
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+
+	"overrideCommand": false,
+	"service": "devcontainer",
+	"workspaceFolder": "/workspace",
+
+	"postCreateCommand": "bash -c \"systemctl is-system-running --wait || true && nix-channel --update && echo 'NixOS test container ready!'\"",
+
+	"remoteUser": "root",
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"arrterian.nix-env-selector",
+				"bbenoist.Nix",
+				"jnoortheen.nix-ide",
+				"brettm12345.nixfmt-vscode"
+			]
+		}
+	}
+}

@@ -31,10 +31,10 @@ jobs:
             main_nix_channel: "https://nixos.org/channels/nixos-unstable"
             home_manager_channel: "https://github.com/nix-community/home-manager/archive/master.tar.gz"
             default_tag: false
-          - nixos_channel: "nixos-25.05"
-            home_manager_version_string: "release-25.05"
-            main_nix_channel: "https://nixos.org/channels/nixos-25.05"
-            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz"
+          - nixos_channel: "nixos-25.11"
+            home_manager_version_string: "release-25.11"
+            main_nix_channel: "https://nixos.org/channels/nixos-25.11"
+            home_manager_channel: "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz"
             default_tag: true
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
@@ -42,7 +42,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - uses: cachix/install-nix-action@6a9a9e84a173d90b3ffb42c5ddaf9ea033fad011 # v23
+      - uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31
         with:
           nix_path: nixpkgs=channel:${{matrix.nix_channel.nixos_channel}}
           extra_nix_config: |
