@@ -17,7 +17,6 @@ on:
     branches:
       - develop
       - main
-      - claude/**
 jobs:
   nix-build:
     # Note: NixOS builds require KVM for runAsRoot in dockerTools.buildImage
