@@ -69,7 +69,7 @@ jobs:
           nix profile install nixpkgs#nix nixpkgs#jq
           echo "$(command -v jq)"
           echo "$(nix derivation show '.#packages.${{matrix.nix_system}}.base-devcontainer."${{matrix.nix_channel}}"')"
-          export derivation_name=$(nix derivation show '.#packages.${{matrix.nix_system}}.base-devcontainer."${{matrix.nix_channel}}"' | jq -- '(.derivations // . ) | to_entries | .[0].value.outputs.out.path' -r | sed 's/^/\/nix\/store\//; s/^\/nix\/store\/\/nix\/store\//\/nix\/store\//')
+          export derivation_name=$(nix derivation show '.#packages.${{matrix.nix_system}}.base-devcontainer."${{matrix.nix_channel}}"' | nix run nixpkgs#jq -- '(.derivations // . ) | to_entries | .[0].value.outputs.out.path' -r | sed 's/^/\/nix\/store\//; s/^\/nix\/store\/\/nix\/store\//\/nix\/store\//')
           export tag=$(cat $derivation_name | docker load | awk '{print $3}')
           docker tag $tag ghcr.io/lucernae/devcontainer-nix:base--${{matrix.nix_channel}}---${{matrix.nix_system}}
           docker push ghcr.io/lucernae/devcontainer-nix:base--${{matrix.nix_channel}}---${{matrix.nix_system}}
