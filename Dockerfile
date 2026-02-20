@@ -1,4 +1,4 @@
-ARG NIXOS_VERSION=nixos-25.05
+ARG NIXOS_VERSION=nixos-25.11
 FROM ghcr.io/lucernae/devcontainer-nix:base--${NIXOS_VERSION}
 
 # In the case that users need non-root user
@@ -13,7 +13,7 @@ ARG USER_HOME_DIR=/home/${USERNAME}
 RUN groupadd --gid $USER_GID $USERNAME \
   && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME
 
-ARG MAIN_NIX_CHANNEL=https://nixos.org/channels/nixos-25.05
+ARG MAIN_NIX_CHANNEL=https://nixos.org/channels/nixos-25.11
 # We use nixpkgs as name because in devcontainers we are going to use it as package manager instead of the OS
 ARG MAIN_NIX_CHANNEL_NAME=nixpkgs
 
@@ -89,7 +89,7 @@ ADD default.nix ${USER_HOME_DIR}/default.nix
 RUN nix-env -if ${USER_HOME_DIR}/default.nix
 
 # Home manager support
-ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz
+ARG HOME_MANAGER_CHANNEL=https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz
 ARG HOME_MANAGER_CHANNEL_NAME=home-manager
 
 ENV NIX_PATH=$USER_HOME_DIR/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH} \
