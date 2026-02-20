@@ -73,7 +73,7 @@ jobs:
         if: ${{ github.event.pull_request.base.repo.url == github.event.pull_request.head.repo.url || github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
         working-directory: .devcontainer/nixos
         run: |
-          export loaded_tag=$(./result | docker load | awk '/Loaded image/{print $NF}')
+          export loaded_tag=$(cat ./result | docker load | awk '/Loaded image/{print $NF}')
           echo "Loaded image: $loaded_tag"
 
           TARGET_TAG="ghcr.io/lucernae/devcontainer-nix:nixos--${{ matrix.nix_channel.nixos_channel }}---${{ matrix.nix_system }}"

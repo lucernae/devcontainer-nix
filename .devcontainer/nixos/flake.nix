@@ -16,7 +16,7 @@
           inherit (nix2containerPkgs) nix2container;
         }).nix2ContainerImage;
 
-        # Streamed layered image for local docker load: ./result | docker load
+        # Layered image for local docker load: cat ./result | docker load
         layeredImage = (import ./container-layeredImage.nix {
           inherit system pkgs;
         }).layeredImage;

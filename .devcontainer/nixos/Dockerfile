@@ -54,6 +54,6 @@ RUN $(cat /path.txt)/activate || true \
     && rm -rf /path.txt
 # The last step is the clean up
 
-# initial path
-ENV PATH=/bin:/usr/sbin:/usr/bin
+# initial path - include /run/wrappers/bin for setuid wrappers (sudo, su, etc.)
+ENV PATH=/run/wrappers/bin:/bin:/usr/sbin:/usr/bin
 CMD [ "/usr/sbin/init" ]

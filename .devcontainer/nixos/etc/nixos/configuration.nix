@@ -34,7 +34,9 @@ in {
     curl
     wget
     acl
+    nixd
     docker  # docker-client was removed in nixpkgs 25.11; use docker (includes CLI)
+    home-manager
     devcontainer-patch
   ];
   nix = {

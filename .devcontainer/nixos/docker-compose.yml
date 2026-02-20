@@ -17,19 +17,19 @@ services:
     # array). The sample below assumes your primary file is in the root of your project.
     #
     # uncomment the build section when you want to rebuild
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - NIXOS_VERSION=nixos-25.11
-    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---latest
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      args:
+#        - NIXOS_VERSION=nixos-25.11
+#    image: ghcr.io/lucernae/devcontainer-nix:nixos-dockertools---latest
+    image: ghcr.io/lucernae/devcontainer-nix:nixos
     privileged: true
     tty: true
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ../../:/workspace:cached
       - ./etc/nixos/configuration.nix:/etc/nixos/configuration.nix
-      # - ./etc/nixos/devcontainer-patch.nix:/etc/nixos/devcontainer-patch.nix
 
       # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
       - /var/run/docker.sock:/var/run/docker.sock
@@ -44,15 +44,18 @@ services:
     tmpfs:
       - /cont/tmp:exec,mode=777
       - /run
-      - /run/wrappers
 
     hostname: devcontainer
 
     environment:
       container: "docker"
-      PATH: "/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
+      # Needed for devcontainer's host probe to work with our /bin compatibility
+      SHELL: "sh"
+      PATH: "/run/wrappers/bin:/bin:/usr/bin:/usr/sbin:/run/current-system/sw/bin/"
       TMPDIR: "/cont/tmp"
       VSCODE_SERVER_CUSTOM_GLIBC_LINKER: "true"
+      # Needed to let any devcontainer (jetbrains) host runner to access bash /etc/profile
+      __NIXOS_SET_ENVIRONMENT_DONE: "true"
 
     cap_add:
       - SYS_ADMIN

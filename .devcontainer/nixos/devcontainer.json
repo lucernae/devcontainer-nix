@@ -31,9 +31,14 @@
 
 	// Wait for systemd (PID 1) to finish booting, then run first-boot setup.
 	// Do NOT call /usr/sbin/init here — systemd is already PID 1 via overrideCommand:false.
-	"postCreateCommand": "bash -c \"systemctl is-system-running --wait || true && nix-channel --update\"",
+	// Script is baked into the image at /opt/devcontainer/scripts/post-create.sh
+	"postCreateCommand": "bash .devcontainer/nixos/opt/devcontainer/scripts/post-create.sh",
+
+	// For NixOS devcontainer, the systemd needs to run as root PID 1
+	"containerUser": "root",
 
 	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "vscode"
 	"remoteUser": "root"
 	,
 	"customizations": {
