@@ -62,7 +62,7 @@ jobs:
       - uses: DeterminateSystems/flakehub-cache-action@main
 
       - name: Login to Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -119,7 +119,7 @@ jobs:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
 
       - name: Login to Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
